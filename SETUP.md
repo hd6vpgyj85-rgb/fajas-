@@ -12,9 +12,9 @@ los colores de marca siguen fijos en el código.
 - [ ] Crea un proyecto nuevo en [Supabase](https://supabase.com).
 - [ ] Ve a **SQL Editor** → pega el contenido completo de
       [`supabase/schema.sql`](./supabase/schema.sql) → **Run**.
-- [ ] Ve a **Storage** → crea un bucket público llamado
-      `product-images` (usado tanto para fotos de producto como de
-      reseñas).
+- [ ] Ve a **Storage** y confirma que el bucket `product-images` exista y
+      esté marcado como público (el script lo crea junto con sus políticas
+      de subida; solo revisa que aparezca).
 - [ ] Verifica en **Table Editor** que `loyalty_tiers` tenga los 3 niveles
       de ejemplo sembrados por el script.
 

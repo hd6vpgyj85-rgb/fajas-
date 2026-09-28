@@ -35,8 +35,9 @@ function ImageField({
     setUploading(true);
     try {
       onChange(await uploadSiteImage(file));
-    } catch {
-      alert("No se pudo subir la imagen.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      alert(`No se pudo subir la imagen: ${message}`);
     } finally {
       setUploading(false);
     }

@@ -4,6 +4,33 @@
 create extension if not exists pgcrypto;
 
 -- =========================================================
+-- STORAGE — bucket de imágenes (productos, reseñas, sitio)
+-- =========================================================
+insert into storage.buckets (id, name, public)
+values ('product-images', 'product-images', true)
+on conflict (id) do nothing;
+
+drop policy if exists "product_images_select_public" on storage.objects;
+create policy "product_images_select_public" on storage.objects
+  for select to anon, authenticated
+  using (bucket_id = 'product-images');
+
+drop policy if exists "product_images_insert_public" on storage.objects;
+create policy "product_images_insert_public" on storage.objects
+  for insert to anon, authenticated
+  with check (bucket_id = 'product-images');
+
+drop policy if exists "product_images_update_admin" on storage.objects;
+create policy "product_images_update_admin" on storage.objects
+  for update to authenticated
+  using (bucket_id = 'product-images');
+
+drop policy if exists "product_images_delete_admin" on storage.objects;
+create policy "product_images_delete_admin" on storage.objects
+  for delete to authenticated
+  using (bucket_id = 'product-images');
+
+-- =========================================================
 -- PRODUCTOS
 -- =========================================================
 create table products (

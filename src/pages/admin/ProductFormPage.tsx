@@ -73,8 +73,9 @@ function ProductFormInner({ initial, existingIds }: ProductFormInnerProps) {
     try {
       const urls = await Promise.all(Array.from(files).map(uploadProductImage));
       setImages((prev) => [...prev, ...urls]);
-    } catch {
-      setError("No se pudieron subir una o más imágenes.");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      setError(`No se pudieron subir una o más imágenes: ${message}`);
     } finally {
       setUploading(false);
     }
