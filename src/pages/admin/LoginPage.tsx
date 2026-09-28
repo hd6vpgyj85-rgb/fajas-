@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 import "./LoginPage.css";
 
 export default function LoginPage() {
   const { session, loading, signIn } = useAuth();
+  const { settings } = useSiteSettings();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export default function LoginPage() {
   return (
     <div className="admin-login">
       <form className="admin-login-card" onSubmit={handleSubmit}>
-        <h1>beautylat</h1>
+        <h1>{settings.businessName}</h1>
         <p>Panel de administración</p>
         <input
           type="email"

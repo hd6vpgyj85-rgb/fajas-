@@ -1,12 +1,14 @@
-import { storeInfo } from "../../data/store";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 import "./LegalPage.css";
 
 export default function TerminosPage() {
+  const { settings } = useSiteSettings();
+
   return (
     <div className="container legal-page">
       <h1>Términos y condiciones</h1>
       <p>
-        Al realizar una compra en {storeInfo.name} aceptas los siguientes términos. Todos los pedidos se confirman
+        Al realizar una compra en {settings.businessName} aceptas los siguientes términos. Todos los pedidos se confirman
         por WhatsApp una vez enviado el formulario de checkout; el pago se coordina directamente con nuestro equipo
         fuera del sitio.
       </p>
@@ -25,7 +27,7 @@ export default function TerminosPage() {
 
       <h2>Programa de fidelidad</h2>
       <p>
-        Las recompensas del programa de fidelidad se otorgan a criterio de {storeInfo.name} y pueden actualizarse en
+        Las recompensas del programa de fidelidad se otorgan a criterio de {settings.businessName} y pueden actualizarse en
         cualquier momento.
       </p>
     </div>

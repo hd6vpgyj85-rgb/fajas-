@@ -25,10 +25,10 @@ async function compressImage(file: File): Promise<Blob> {
   });
 }
 
-export async function uploadProductImage(file: File): Promise<string> {
+async function uploadToFolder(file: File, folder: string): Promise<string> {
   const blob = await compressImage(file);
   const fileName = `${crypto.randomUUID()}.jpg`;
-  const path = `products/${fileName}`;
+  const path = `${folder}/${fileName}`;
 
   const { error } = await supabase.storage.from("product-images").upload(path, blob, {
     contentType: "image/jpeg",
@@ -39,6 +39,10 @@ export async function uploadProductImage(file: File): Promise<string> {
 
   const { data } = supabase.storage.from("product-images").getPublicUrl(path);
   return data.publicUrl;
+}
+
+export async function uploadProductImage(file: File): Promise<string> {
+  return uploadToFolder(file, "products");
 }
 
 export async function uploadImageFromUrl(url: string): Promise<string> {
@@ -49,17 +53,9 @@ export async function uploadImageFromUrl(url: string): Promise<string> {
 }
 
 export async function uploadReviewImage(file: File): Promise<string> {
-  const blob = await compressImage(file);
-  const fileName = `${crypto.randomUUID()}.jpg`;
-  const path = `reviews/${fileName}`;
+  return uploadToFolder(file, "reviews");
+}
 
-  const { error } = await supabase.storage.from("product-images").upload(path, blob, {
-    contentType: "image/jpeg",
-    cacheControl: "31536000",
-  });
-
-  if (error) throw error;
-
-  const { data } = supabase.storage.from("product-images").getPublicUrl(path);
-  return data.publicUrl;
+export async function uploadSiteImage(file: File): Promise<string> {
+  return uploadToFolder(file, "site");
 }

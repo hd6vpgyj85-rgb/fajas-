@@ -21,6 +21,13 @@
   font-weight: 700;
   color: var(--color-primary-dark);
   letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+}
+
+.site-header-logo img {
+  max-height: 36px;
+  width: auto;
 }
 
 .site-header-burger {

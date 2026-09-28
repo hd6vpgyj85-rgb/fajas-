@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { CATEGORIES } from "../types";
-import { storeInfo } from "../data/store";
 import { useCart } from "../context/CartContext";
+import { useSiteSettings } from "../context/SiteSettingsContext";
 import "./Header.css";
 
 export default function Header({ centered = false }: { centered?: boolean }) {
   const { count } = useCart();
+  const { settings } = useSiteSettings();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -19,7 +20,7 @@ export default function Header({ centered = false }: { centered?: boolean }) {
         </button>
 
         <Link to="/" className="site-header-logo">
-          {storeInfo.name}
+          {settings.logoUrl ? <img src={settings.logoUrl} alt={settings.businessName} /> : settings.businessName}
         </Link>
 
         <nav className={`site-header-nav ${menuOpen ? "is-open" : ""}`}>

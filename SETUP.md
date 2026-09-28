@@ -1,10 +1,11 @@
 # SETUP — Puesta en marcha de beautylat
 
-Checklist para dejar el sitio funcionando de punta a punta. A diferencia de
-una plantilla genérica, aquí las categorías, el WhatsApp de la tienda, los
-colores y los textos legales están **fijos en el código** (no hay un panel
-de "configuración del sitio"): lo que sí se administra desde `/admin` es el
-catálogo, los pedidos, las reseñas, los cupones y los clientes/fidelidad.
+Checklist para dejar el sitio funcionando de punta a punta. Desde
+`/admin/configuracion` se edita, sin tocar código: nombre del negocio,
+logo, título y foto del hero, foto de la tienda, imágenes de cada
+categoría, WhatsApp, teléfono, correo, dirección, horario, mapa y redes
+sociales. Las categorías en sí (fajas/ropa/bolsas/perfumes/accesorios) y
+los colores de marca siguen fijos en el código.
 
 ## 1. Crear el proyecto de Supabase
 
@@ -37,22 +38,22 @@ catálogo, los pedidos, las reseñas, los cupones y los clientes/fidelidad.
       Secrets**, agrega esas mismas dos variables. `.env.local` no se sube
       al repositorio, así que el build en la nube no las ve sin este paso.
 
-## 4. Datos fijos del negocio
+## 4. Personalizar el negocio
 
-- [ ] **`src/data/store.ts`**: número de WhatsApp, dirección, horario,
-      redes sociales y foto de la tienda.
-- [ ] **`src/types/index.ts`** (`CATEGORIES`): nombre, tagline e imagen de
-      cada una de las 5 categorías (fajas, ropa, bolsas, perfumes,
-      accesorios).
-- [ ] **`public/images/`**: reemplaza los SVG de marcador de posición
-      (`hero.svg`, `store.svg`, `category-*.svg`) por fotos reales de la
-      tienda y el catálogo, con el mismo nombre de archivo.
+- [ ] Entra a **`/admin/configuracion`** y completa nombre, logo, hero,
+      foto de la tienda, imágenes de categorías, WhatsApp, contacto,
+      dirección, horario, mapa y redes sociales. Se guarda en la tabla
+      `site_settings` y se refleja de inmediato en el sitio público (el
+      logo del header, el título de la pestaña del navegador, etc.).
 - [ ] **`src/styles/theme.css`**: colores de marca (`--color-primary`,
       `--color-accent`, etc.) y tipografías (`--font-display`,
-      `--font-body`).
+      `--font-body`) — no son editables desde el admin a propósito, para
+      no complicar el build.
 - [ ] **`public/favicon.svg`**, **`public/og-image.svg`** e **`index.html`**
       (`<title>`, meta `description`, Open Graph): SEO estático, se sirve
-      antes de que la app cargue datos de Supabase.
+      antes de que la app cargue datos de Supabase, por eso no es editable
+      desde el admin (el título de la pestaña sí se actualiza en cuanto
+      carga la app, vía JavaScript).
 - [ ] **`src/pages/public/TerminosPage.tsx`** y
       **`src/pages/public/PrivacidadPage.tsx`**: textos legales de ejemplo,
       reemplázalos por los reales del negocio.

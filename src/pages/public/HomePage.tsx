@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { useProducts } from "../../context/ProductsContext";
 import { useAnalytics } from "../../context/AnalyticsContext";
-import { getWhatsAppUrl, storeInfo } from "../../data/store";
+import { getWhatsAppUrl } from "../../data/store";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 import ProductCard from "../../components/ProductCard";
 import Testimonials from "../../components/Testimonials";
 import VisitUs from "../../components/VisitUs";
@@ -14,6 +15,7 @@ import "./HomePage.css";
 export default function HomePage() {
   const { products, loading } = useProducts();
   const { stats } = useAnalytics();
+  const { settings } = useSiteSettings();
 
   const topProducts = useMemo(() => {
     if (products.length === 0) return [];
@@ -31,18 +33,18 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="hero">
+      <section className="hero" style={{ backgroundImage: `url(${settings.heroImage})` }}>
         <div className="hero-overlay" />
         <div className="container hero-content">
           <span className="hero-badge">Especialistas en moda</span>
-          <h1>Realza tu figura, con estilo</h1>
-          <p>Fajas, ropa y accesorios seleccionados para lucir y sentirte increíble todos los días.</p>
+          <h1>{settings.heroTitle}</h1>
+          <p>{settings.heroSubtitle}</p>
           <div className="hero-actions">
             <Link to="/fajas" className="btn btn-primary">
               Ver más
             </Link>
             <a
-              href={getWhatsAppUrl(`Hola ${storeInfo.name}, quiero más información 💗`)}
+              href={getWhatsAppUrl(settings.whatsappNumber, `Hola ${settings.businessName}, quiero más información 💗`)}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-outline hero-btn-outline"

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 import { CartProvider } from "./context/CartContext";
 import { ProductsProvider } from "./context/ProductsContext";
 import { OrdersProvider } from "./context/OrdersContext";
@@ -41,78 +42,82 @@ import ReviewsPage from "./pages/admin/ReviewsPage";
 import CouponsPage from "./pages/admin/CouponsPage";
 import NewCouponPage from "./pages/admin/NewCouponPage";
 import CustomersPage from "./pages/admin/CustomersPage";
+import SiteSettingsPage from "./pages/admin/SiteSettingsPage";
 import LoadingSpinner from "./components/LoadingSpinner";
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <ProductsProvider>
-          <OrdersProvider>
-            <ReviewsProvider>
-              <AnalyticsProvider>
-                <CouponsProvider>
-                  <CustomersProvider>
-                    <LoyaltyProvider>
-                      <CartProvider>
-                        <ScrollToTop />
-                        <Routes>
-                          <Route element={<HomeLayout />}>
-                            <Route path="/" element={<HomePage />} />
-                          </Route>
+        <SiteSettingsProvider>
+          <ProductsProvider>
+            <OrdersProvider>
+              <ReviewsProvider>
+                <AnalyticsProvider>
+                  <CouponsProvider>
+                    <CustomersProvider>
+                      <LoyaltyProvider>
+                        <CartProvider>
+                          <ScrollToTop />
+                          <Routes>
+                            <Route element={<HomeLayout />}>
+                              <Route path="/" element={<HomePage />} />
+                            </Route>
 
-                          <Route element={<CategoryLayout />}>
-                            <Route path="/fajas" element={<CategoryPage category="fajas" />} />
-                            <Route path="/ropa" element={<CategoryPage category="ropa" />} />
-                            <Route path="/bolsas" element={<CategoryPage category="bolsas" />} />
-                            <Route path="/perfumes" element={<CategoryPage category="perfumes" />} />
-                            <Route path="/accesorios" element={<CategoryPage category="accesorios" />} />
-                            <Route path="/ofertas" element={<OfertasPage />} />
-                            <Route path="/producto/:id" element={<ProductDetailPage />} />
-                            <Route path="/carrito" element={<CartPage />} />
-                            <Route path="/checkout" element={<CheckoutPage />} />
-                            <Route path="/terminos" element={<TerminosPage />} />
-                            <Route path="/privacidad" element={<PrivacidadPage />} />
-                            <Route path="*" element={<NotFoundPage />} />
-                          </Route>
+                            <Route element={<CategoryLayout />}>
+                              <Route path="/fajas" element={<CategoryPage category="fajas" />} />
+                              <Route path="/ropa" element={<CategoryPage category="ropa" />} />
+                              <Route path="/bolsas" element={<CategoryPage category="bolsas" />} />
+                              <Route path="/perfumes" element={<CategoryPage category="perfumes" />} />
+                              <Route path="/accesorios" element={<CategoryPage category="accesorios" />} />
+                              <Route path="/ofertas" element={<OfertasPage />} />
+                              <Route path="/producto/:id" element={<ProductDetailPage />} />
+                              <Route path="/carrito" element={<CartPage />} />
+                              <Route path="/checkout" element={<CheckoutPage />} />
+                              <Route path="/terminos" element={<TerminosPage />} />
+                              <Route path="/privacidad" element={<PrivacidadPage />} />
+                              <Route path="*" element={<NotFoundPage />} />
+                            </Route>
 
-                          <Route element={<SearchLayout />}>
-                            <Route path="/buscar" element={<SearchPage />} />
-                          </Route>
+                            <Route element={<SearchLayout />}>
+                              <Route path="/buscar" element={<SearchPage />} />
+                            </Route>
 
-                          <Route path="/fidelidad/:token" element={<FidelidadPage />} />
+                            <Route path="/fidelidad/:token" element={<FidelidadPage />} />
 
-                          <Route path="/admin/login" element={<LoginPage />} />
-                          <Route path="/admin" element={<AdminLayout />}>
-                            <Route index element={<DashboardPage />} />
-                            <Route path="productos" element={<ProductsPage />} />
-                            <Route path="productos/nuevo" element={<ProductFormPage />} />
-                            <Route
-                              path="productos/importar"
-                              element={
-                                <Suspense fallback={<LoadingSpinner />}>
-                                  <ProductImportPage />
-                                </Suspense>
-                              }
-                            />
-                            <Route path="productos/:id" element={<ProductFormPage />} />
-                            <Route path="categorias" element={<CategoriesPage />} />
-                            <Route path="pedidos" element={<OrdersPage />} />
-                            <Route path="pedidos/baul" element={<OrdersArchivePage />} />
-                            <Route path="resenas" element={<ReviewsPage />} />
-                            <Route path="cupones" element={<CouponsPage />} />
-                            <Route path="cupones/nuevo" element={<NewCouponPage />} />
-                            <Route path="clientes" element={<CustomersPage />} />
-                          </Route>
-                        </Routes>
-                      </CartProvider>
-                    </LoyaltyProvider>
-                  </CustomersProvider>
-                </CouponsProvider>
-              </AnalyticsProvider>
-            </ReviewsProvider>
-          </OrdersProvider>
-        </ProductsProvider>
+                            <Route path="/admin/login" element={<LoginPage />} />
+                            <Route path="/admin" element={<AdminLayout />}>
+                              <Route index element={<DashboardPage />} />
+                              <Route path="productos" element={<ProductsPage />} />
+                              <Route path="productos/nuevo" element={<ProductFormPage />} />
+                              <Route
+                                path="productos/importar"
+                                element={
+                                  <Suspense fallback={<LoadingSpinner />}>
+                                    <ProductImportPage />
+                                  </Suspense>
+                                }
+                              />
+                              <Route path="productos/:id" element={<ProductFormPage />} />
+                              <Route path="categorias" element={<CategoriesPage />} />
+                              <Route path="pedidos" element={<OrdersPage />} />
+                              <Route path="pedidos/baul" element={<OrdersArchivePage />} />
+                              <Route path="resenas" element={<ReviewsPage />} />
+                              <Route path="cupones" element={<CouponsPage />} />
+                              <Route path="cupones/nuevo" element={<NewCouponPage />} />
+                              <Route path="clientes" element={<CustomersPage />} />
+                              <Route path="configuracion" element={<SiteSettingsPage />} />
+                            </Route>
+                          </Routes>
+                        </CartProvider>
+                      </LoyaltyProvider>
+                    </CustomersProvider>
+                  </CouponsProvider>
+                </AnalyticsProvider>
+              </ReviewsProvider>
+            </OrdersProvider>
+          </ProductsProvider>
+        </SiteSettingsProvider>
       </AuthProvider>
     </BrowserRouter>
   );

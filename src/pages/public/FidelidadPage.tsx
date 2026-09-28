@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useLoyalty, type PublicCustomer } from "../../context/LoyaltyContext";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 import type { LoyaltyClaim } from "../../types";
 import { buildLoyaltyClaimMessage } from "../../lib/whatsapp";
 import { getWhatsAppUrl } from "../../data/store";
@@ -11,6 +12,7 @@ import "./FidelidadPage.css";
 export default function FidelidadPage() {
   const { token } = useParams<{ token: string }>();
   const { tiers, loading: tiersLoading, getCustomerByToken, getClaimsByToken, requestClaim } = useLoyalty();
+  const { settings } = useSiteSettings();
 
   const [customer, setCustomer] = useState<PublicCustomer | null | undefined>(undefined);
   const [claims, setClaims] = useState<LoyaltyClaim[]>([]);
@@ -54,7 +56,13 @@ export default function FidelidadPage() {
       await load();
       const tier = sortedTiers.find((t) => t.id === tierId);
       if (tier) {
-        window.open(getWhatsAppUrl(buildLoyaltyClaimMessage(customer.name, tier.rewardDescription)), "_blank");
+        window.open(
+          getWhatsAppUrl(
+            settings.whatsappNumber,
+            buildLoyaltyClaimMessage(settings.businessName, customer.name, tier.rewardDescription)
+          ),
+          "_blank"
+        );
       }
     } finally {
       setRequesting(null);

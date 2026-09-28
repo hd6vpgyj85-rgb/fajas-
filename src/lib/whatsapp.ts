@@ -2,6 +2,7 @@ import { formatPrice } from "./format";
 import type { CartLine, OrderAddress, OrderCustomer } from "../types";
 
 interface CheckoutMessageParams {
+  businessName: string;
   items: CartLine[];
   subtotal: number;
   discount: number;
@@ -15,11 +16,11 @@ interface CheckoutMessageParams {
 }
 
 export function buildCheckoutMessage(params: CheckoutMessageParams): string {
-  const { items, subtotal, discount, couponCode, total, customer, address, paymentMethod, notes, reviewQuote } =
+  const { businessName, items, subtotal, discount, couponCode, total, customer, address, paymentMethod, notes, reviewQuote } =
     params;
 
   const lines: string[] = [];
-  lines.push("*Nuevo pedido — beautylat*");
+  lines.push(`*Nuevo pedido — ${businessName}*`);
   lines.push("");
   lines.push("*Productos:*");
   for (const item of items) {
@@ -57,9 +58,9 @@ export function buildCheckoutMessage(params: CheckoutMessageParams): string {
   return lines.join("\n");
 }
 
-export function buildLoyaltyClaimMessage(customerName: string, rewardDescription: string): string {
+export function buildLoyaltyClaimMessage(businessName: string, customerName: string, rewardDescription: string): string {
   return [
-    "*Reclamo de recompensa — beautylat*",
+    `*Reclamo de recompensa — ${businessName}*`,
     "",
     `Hola, soy ${customerName} y quiero reclamar mi recompensa:`,
     `🎁 ${rewardDescription}`,

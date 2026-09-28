@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { CATEGORIES, type Category, type ProductLevel } from "../../types";
 import { useProducts } from "../../context/ProductsContext";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 import CategoryPhotoBanner from "../../components/CategoryPhotoBanner";
 import CategoryHero from "../../components/CategoryHero";
 import ProductFilters, { applyFilter, type ActiveFilter } from "../../components/ProductFilters";
@@ -20,16 +21,18 @@ function initialFilterFromParams(params: URLSearchParams): ActiveFilter {
 
 export default function CategoryPage({ category }: { category: Category }) {
   const { products, loading } = useProducts();
+  const { settings } = useSiteSettings();
   const [searchParams] = useSearchParams();
   const [filter, setFilter] = useState<ActiveFilter>(() => initialFilterFromParams(searchParams));
 
   const meta = CATEGORIES.find((c) => c.slug === category)!;
+  const image = settings.categoryImages[category] ?? meta.image;
   const categoryProducts = useMemo(() => products.filter((p) => p.category === category), [products, category]);
   const filtered = useMemo(() => applyFilter(categoryProducts, filter), [categoryProducts, filter]);
 
   return (
     <>
-      <CategoryPhotoBanner name={meta.name} tagline={meta.tagline} image={meta.image} />
+      <CategoryPhotoBanner name={meta.name} tagline={meta.tagline} image={image} />
       <CategoryHero title={`Descubre ${meta.name.toLowerCase()}`} subtitle={meta.tagline} />
 
       <div className="container">

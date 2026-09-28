@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { getWhatsAppUrl, storeInfo } from "../data/store";
+import { getWhatsAppUrl } from "../data/store";
+import { useSiteSettings } from "../context/SiteSettingsContext";
 import "./WhatsAppButton.css";
 
 const STORAGE_KEY = "beautylat-whatsapp-btn-pos";
@@ -31,6 +32,7 @@ function loadInitialPosition(): Position {
 }
 
 export default function WhatsAppButton() {
+  const { settings } = useSiteSettings();
   const [position, setPosition] = useState<Position>(loadInitialPosition);
   const [dragging, setDragging] = useState(false);
   const dragMoved = useRef(false);
@@ -72,7 +74,7 @@ export default function WhatsAppButton() {
 
   return (
     <a
-      href={getWhatsAppUrl(`Hola ${storeInfo.name}, tengo una pregunta 💬`)}
+      href={getWhatsAppUrl(settings.whatsappNumber, `Hola ${settings.businessName}, tengo una pregunta 💬`)}
       target="_blank"
       rel="noopener noreferrer"
       className={`whatsapp-fab ${dragging ? "is-dragging" : ""}`}

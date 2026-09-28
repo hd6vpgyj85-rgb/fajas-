@@ -418,6 +418,45 @@ $$;
 grant execute on function revert_loyalty_claim(uuid) to authenticated;
 
 -- =========================================================
+-- CONFIGURACIÓN DEL SITIO (fila única, editable desde /admin)
+-- =========================================================
+create table site_settings (
+  id boolean primary key default true check (id),
+  business_name text not null default 'beautylat',
+  tagline text not null default 'Fajas, ropa y accesorios para realzar tu figura',
+  logo_url text,
+  hero_title text not null default 'Realza tu figura, con estilo',
+  hero_subtitle text not null default 'Fajas, ropa y accesorios seleccionados para lucir y sentirte increíble todos los días.',
+  hero_image text,
+  store_photo text,
+  category_images jsonb not null default '{}'::jsonb,
+  whatsapp_number text not null default '526561234567',
+  phone text not null default '+52 656 123 4567',
+  email text not null default 'contacto@beautylat.mx',
+  address text not null default 'Av. Paseo Triunfo de la República 3401, Cd. Juárez, Chih.',
+  hours text not null default 'Lunes a sábado · 10:00 a 20:00',
+  instagram_url text,
+  facebook_url text,
+  tiktok_url text,
+  map_url text,
+  updated_at timestamptz not null default now()
+);
+
+alter table site_settings enable row level security;
+
+create policy "site_settings_select_public" on site_settings
+  for select to anon, authenticated using (true);
+
+create policy "site_settings_insert_admin" on site_settings
+  for insert to authenticated with check (true);
+
+create policy "site_settings_update_admin" on site_settings
+  for update to authenticated using (true) with check (true);
+
+insert into site_settings (id) values (true)
+on conflict (id) do nothing;
+
+-- =========================================================
 -- SEED — niveles de fidelidad de ejemplo
 -- =========================================================
 insert into loyalty_tiers (purchases_required, reward_description, discount_percent) values

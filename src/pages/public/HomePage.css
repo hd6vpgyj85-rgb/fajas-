@@ -3,7 +3,10 @@
   min-height: 560px;
   display: flex;
   align-items: center;
-  background: url("/images/hero.svg") center/cover no-repeat, var(--color-bg-alt);
+  background-color: var(--color-bg-alt);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #fff;
 }
 

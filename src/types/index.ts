@@ -170,3 +170,33 @@ export interface CartLine {
   quantity: number;
   stock: number;
 }
+
+export type CategoryImageKey = Category | "ofertas";
+
+export const CATEGORY_IMAGE_KEYS: CategoryImageKey[] = [...CATEGORIES.map((c) => c.slug), "ofertas"];
+
+export const DEFAULT_CATEGORY_IMAGES: Record<CategoryImageKey, string> = {
+  ...(Object.fromEntries(CATEGORIES.map((c) => [c.slug, c.image])) as Record<Category, string>),
+  ofertas: "/images/category-ofertas.svg",
+};
+
+export interface SiteSettings {
+  businessName: string;
+  tagline: string;
+  logoUrl?: string | null;
+  heroTitle: string;
+  heroSubtitle: string;
+  heroImage?: string | null;
+  storePhoto?: string | null;
+  categoryImages: Partial<Record<CategoryImageKey, string>>;
+  whatsappNumber: string;
+  phone: string;
+  email: string;
+  address: string;
+  hours: string;
+  instagramUrl?: string | null;
+  facebookUrl?: string | null;
+  tiktokUrl?: string | null;
+  mapUrl?: string | null;
+  updatedAt: string;
+}

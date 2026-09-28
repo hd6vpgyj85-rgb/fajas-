@@ -5,6 +5,7 @@ import { useOrders } from "../../context/OrdersContext";
 import { useReviews } from "../../context/ReviewsContext";
 import { useCoupons } from "../../context/CouponsContext";
 import { useLoyalty } from "../../context/LoyaltyContext";
+import { useSiteSettings } from "../../context/SiteSettingsContext";
 import { formatPrice } from "../../lib/format";
 import { buildCheckoutMessage } from "../../lib/whatsapp";
 import { getWhatsAppUrl } from "../../data/store";
@@ -27,6 +28,7 @@ export default function CheckoutPage() {
   const { createReview } = useReviews();
   const { redeemCoupon } = useCoupons();
   const { getOrCreateCustomerForCheckout } = useLoyalty();
+  const { settings } = useSiteSettings();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -135,6 +137,7 @@ export default function CheckoutPage() {
       const { token } = await getOrCreateCustomerForCheckout(`${form.nombre} ${form.apellido}`.trim(), form.telefono);
 
       const message = buildCheckoutMessage({
+        businessName: settings.businessName,
         items: lines,
         subtotal,
         discount,
@@ -147,7 +150,7 @@ export default function CheckoutPage() {
         reviewQuote: reviewQuoteText,
       });
 
-      window.open(getWhatsAppUrl(message), "_blank", "noopener,noreferrer");
+      window.open(getWhatsAppUrl(settings.whatsappNumber, message), "_blank", "noopener,noreferrer");
 
       const qrDataUrl = await generateLoyaltyQrDataUrl(token);
       setSuccess({ orderId, qrDataUrl, cardUrl: getLoyaltyCardUrl(token) });
