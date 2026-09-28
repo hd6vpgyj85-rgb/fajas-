@@ -7,6 +7,7 @@ interface CustomerRow {
   name: string;
   phone: string;
   token: string;
+  access_code: string;
   purchases_count: number;
   notes: string | null;
   created_at: string;
@@ -18,6 +19,7 @@ function rowToCustomer(row: CustomerRow): Customer {
     name: row.name,
     phone: row.phone,
     token: row.token,
+    accessCode: row.access_code,
     purchasesCount: row.purchases_count,
     notes: row.notes,
     createdAt: row.created_at,

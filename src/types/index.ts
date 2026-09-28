@@ -135,6 +135,7 @@ export interface Customer {
   name: string;
   phone: string;
   token: string;
+  accessCode: string;
   purchasesCount: number;
   notes?: string | null;
   createdAt: string;

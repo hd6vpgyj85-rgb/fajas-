@@ -76,6 +76,7 @@ export default function CustomersPage() {
                 <div className="customer-card-header">
                   <strong>{customer.name}</strong>
                   <span>{customer.phone}</span>
+                  <span className="customer-code">Código: {customer.accessCode}</span>
                 </div>
                 {customer.notes && <p className="customer-notes">{customer.notes}</p>}
 
@@ -204,6 +205,7 @@ function QrModal({ customer, onClose }: { customer: Customer; onClose: () => voi
     <Modal title={`QR de ${customer.name}`} onClose={onClose}>
       <div className="qr-modal">
         {qrDataUrl ? <img src={qrDataUrl} alt="Código QR" /> : <LoadingSpinner />}
+        <p className="qr-modal-code">{customer.accessCode}</p>
         <p className="qr-modal-url">{cardUrl}</p>
         <div className="product-form-actions">
           <button className="admin-btn-sm" onClick={() => navigator.clipboard.writeText(cardUrl)}>

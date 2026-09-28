@@ -1,34 +1,56 @@
 .category-photo-banner {
-  height: 220px;
-  background-size: cover;
-  background-position: center;
+  position: relative;
+  height: 230px;
   display: flex;
   align-items: flex-end;
-  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-alt);
+  isolation: isolate;
+}
+
+.category-photo-banner-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;
+  background-position: center;
+  animation: banner-zoom 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .category-photo-banner::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(43, 22, 32, 0.1), rgba(43, 22, 32, 0.65));
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(43, 22, 32, 0.05), rgba(43, 22, 32, 0.7));
 }
 
 .category-photo-banner-overlay {
-  position: relative;
-  z-index: 1;
   color: #fff;
-  padding: 24px 20px;
+  padding: 24px 20px 26px;
   width: 100%;
 }
 
 .category-photo-banner-overlay h1 {
-  font-size: 2rem;
+  font-size: 2.1rem;
+  animation: fade-up 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s both;
 }
 
 .category-photo-banner-overlay p {
   margin-top: 6px;
-  opacity: 0.9;
+  opacity: 0.92;
+  animation: fade-up 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.28s both;
+}
+
+@keyframes banner-zoom {
+  from {
+    transform: scale(1.12);
+    opacity: 0.6;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @media (min-width: 768px) {
@@ -39,10 +61,10 @@
   .category-photo-banner-overlay {
     max-width: var(--container-max);
     margin: 0 auto;
-    padding: 32px 20px;
+    padding: 36px 20px;
   }
 
   .category-photo-banner-overlay h1 {
-    font-size: 2.6rem;
+    font-size: 2.8rem;
   }
 }

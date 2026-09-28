@@ -2,7 +2,8 @@
   display: flex;
   flex-direction: column;
   background: var(--color-bg-soft);
-  margin-top: 40px;
+  margin-top: 48px;
+  overflow: hidden;
 }
 
 .category-footer-image {
@@ -14,6 +15,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.category-footer:hover .category-footer-image img {
+  transform: scale(1.04);
 }
 
 .category-footer-text {
@@ -26,8 +32,9 @@
 }
 
 .category-footer-text h2 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   max-width: 420px;
+  text-wrap: balance;
 }
 
 .category-footer-text p {

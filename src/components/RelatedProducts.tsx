@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import type { Product } from "../types";
 import ProductGrid from "./ProductGrid";
+import Reveal from "./Reveal";
 
 export default function RelatedProducts({ current, all }: { current: Product; all: Product[] }) {
   const related = useMemo(() => {
@@ -14,7 +15,10 @@ export default function RelatedProducts({ current, all }: { current: Product; al
 
   return (
     <section className="related-products">
-      <h2>También te puede gustar</h2>
+      <Reveal className="related-products-heading">
+        <span className="section-eyebrow">Completa tu look</span>
+        <h2>También te puede gustar</h2>
+      </Reveal>
       <ProductGrid products={related} />
     </section>
   );

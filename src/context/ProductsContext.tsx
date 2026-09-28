@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "../lib/supabase";
-import type { Product, ProductLevel } from "../types";
+import { LEVEL_LABELS, type Product, type ProductLevel } from "../types";
 
 interface ProductRow {
   id: string;
@@ -27,7 +27,7 @@ function rowToProduct(row: ProductRow): Product {
     price: Number(row.price),
     compareAtPrice: row.compare_at_price !== null ? Number(row.compare_at_price) : null,
     onSale: row.on_sale,
-    levels: (row.levels ?? []) as ProductLevel[],
+    levels: (row.levels ?? []).filter((l): l is ProductLevel => l in LEVEL_LABELS),
     category: row.category as Product["category"],
     brand: row.brand,
     stock: row.stock,

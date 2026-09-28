@@ -10,6 +10,7 @@ import { AnalyticsProvider } from "./context/AnalyticsContext";
 import { CouponsProvider } from "./context/CouponsContext";
 import { CustomersProvider } from "./context/CustomersContext";
 import { LoyaltyProvider } from "./context/LoyaltyContext";
+import { ToastProvider } from "./context/ToastContext";
 
 import ScrollToTop from "./components/ScrollToTop";
 
@@ -26,6 +27,7 @@ import ProductDetailPage from "./pages/public/ProductDetailPage";
 import CartPage from "./pages/public/CartPage";
 import CheckoutPage from "./pages/public/CheckoutPage";
 import FidelidadPage from "./pages/public/FidelidadPage";
+import MiTarjetaPage from "./pages/public/MiTarjetaPage";
 import TerminosPage from "./pages/public/TerminosPage";
 import PrivacidadPage from "./pages/public/PrivacidadPage";
 import NotFoundPage from "./pages/public/NotFoundPage";
@@ -58,6 +60,7 @@ export default function App() {
                     <CustomersProvider>
                       <LoyaltyProvider>
                         <CartProvider>
+                          <ToastProvider>
                           <ScrollToTop />
                           <Routes>
                             <Route element={<HomeLayout />}>
@@ -76,6 +79,7 @@ export default function App() {
                               <Route path="/checkout" element={<CheckoutPage />} />
                               <Route path="/terminos" element={<TerminosPage />} />
                               <Route path="/privacidad" element={<PrivacidadPage />} />
+                              <Route path="/mi-tarjeta" element={<MiTarjetaPage />} />
                               <Route path="*" element={<NotFoundPage />} />
                             </Route>
 
@@ -109,6 +113,7 @@ export default function App() {
                               <Route path="configuracion" element={<SiteSettingsPage />} />
                             </Route>
                           </Routes>
+                          </ToastProvider>
                         </CartProvider>
                       </LoyaltyProvider>
                     </CustomersProvider>

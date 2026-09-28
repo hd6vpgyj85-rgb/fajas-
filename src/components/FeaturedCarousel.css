@@ -1,12 +1,15 @@
 .featured-carousel {
-  padding: 48px 0;
+  padding: 56px 0;
   text-align: center;
 }
 
-.featured-carousel h2 {
-  font-size: 1.6rem;
-  margin-bottom: 24px;
+.featured-heading {
   padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+.featured-carousel h2 {
+  font-size: 1.7rem;
 }
 
 .featured-carousel-wrap {
@@ -41,7 +44,7 @@
   scroll-snap-align: center;
   opacity: 0.55;
   transform: scale(0.9);
-  transition: transform var(--transition), opacity var(--transition), box-shadow var(--transition);
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.45s ease, box-shadow 0.45s ease;
 }
 
 .featured-item img {
@@ -69,6 +72,17 @@
   align-items: center;
   justify-content: center;
   z-index: 2;
+  transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.featured-arrow:hover {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.featured-arrow:active {
+  transform: scale(0.92);
 }
 
 .featured-dots {
@@ -85,6 +99,7 @@
   border: none;
   background: var(--color-border);
   padding: 0;
+  transition: width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), background var(--transition);
 }
 
 .featured-dot.is-active {
@@ -99,6 +114,8 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
+  padding: 0 20px;
+  animation: fade-up 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .featured-tag {

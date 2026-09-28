@@ -16,7 +16,9 @@ const PAYMENT_METHODS = ["Efectivo contra entrega", "Transferencia bancaria", "D
 interface SuccessState {
   orderId: string;
   qrDataUrl: string;
+  cardPath: string;
   cardUrl: string;
+  accessCode: string;
 }
 
 export default function CheckoutPage() {
@@ -51,6 +53,7 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<SuccessState | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const discount = couponStatus?.discount ?? 0;
   const total = Math.max(0, subtotal - discount);
@@ -110,7 +113,7 @@ export default function CheckoutPage() {
         total,
       });
 
-      const { token } = await getOrCreateCustomerForCheckout(`${form.nombre} ${form.apellido}`.trim(), form.telefono);
+      const { token, accessCode } = await getOrCreateCustomerForCheckout(`${form.nombre} ${form.apellido}`.trim(), form.telefono);
 
       const message = buildCheckoutMessage({
         businessName: settings.businessName,
@@ -128,7 +131,7 @@ export default function CheckoutPage() {
       window.open(getWhatsAppUrl(settings.whatsappNumber, message), "_blank", "noopener,noreferrer");
 
       const qrDataUrl = await generateLoyaltyQrDataUrl(token);
-      setSuccess({ orderId, qrDataUrl, cardUrl: getLoyaltyCardUrl(token) });
+      setSuccess({ orderId, qrDataUrl, cardPath: `/fidelidad/${token}`, cardUrl: getLoyaltyCardUrl(token), accessCode });
       clear();
     } catch (err) {
       setError(err instanceof Error ? err.message : "No se pudo completar tu pedido. Intenta de nuevo.");
@@ -140,22 +143,32 @@ export default function CheckoutPage() {
   if (success) {
     return (
       <div className="container checkout-success">
-        <h1>¡Gracias por tu pedido! 🎉</h1>
-        <p>Abrimos WhatsApp para confirmar los detalles con nuestro equipo. Este es tu QR de fidelidad:</p>
+        <div className="checkout-success-check" aria-hidden="true">
+          <svg viewBox="0 0 52 52">
+            <circle cx="26" cy="26" r="24" />
+            <path d="M15 27l7 7 15-16" />
+          </svg>
+        </div>
+        <h1>¡Gracias por tu pedido!</h1>
+        <p>Abrimos WhatsApp para confirmar los detalles con nuestro equipo. Guarda tu tarjeta de fidelidad:</p>
 
         <div className="loyalty-mini-card">
           <img src={success.qrDataUrl} alt="Código QR de tu tarjeta de fidelidad" />
-          <p>Guarda este código: acumula compras y desbloquea recompensas y reseñas.</p>
+          <span className="loyalty-mini-code">{success.accessCode}</span>
+          <p>Acumula compras para desbloquear recompensas y reseñas. Si pierdes el link, entra en “Mi tarjeta” con tu WhatsApp y este código.</p>
         </div>
 
         <div className="checkout-success-actions">
           <button
             className="btn btn-outline"
-            onClick={() => navigator.clipboard.writeText(success.cardUrl)}
+            onClick={() => {
+              navigator.clipboard.writeText(success.cardUrl);
+              setLinkCopied(true);
+            }}
           >
-            Copiar link
+            {linkCopied ? "¡Copiado!" : "Copiar link"}
           </button>
-          <button className="btn btn-primary" onClick={() => navigate(success.cardUrl.replace(window.location.origin, ""))}>
+          <button className="btn btn-primary" onClick={() => navigate(success.cardPath)}>
             Ver mi tarjeta
           </button>
         </div>

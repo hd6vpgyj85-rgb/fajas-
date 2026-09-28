@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatPrice } from "../lib/format";
 import type { Product } from "../types";
+import Reveal from "./Reveal";
 import "./FeaturedCarousel.css";
 
 function pickRandom(products: Product[], count: number): Product[] {
@@ -10,7 +11,7 @@ function pickRandom(products: Product[], count: number): Product[] {
 }
 
 export default function FeaturedCarousel({ products }: { products: Product[] }) {
-  const [featured] = useState(() => pickRandom(products, Math.min(8, products.length)));
+  const featured = useMemo(() => pickRandom(products, Math.min(8, products.length)), [products]);
   const [activeIndex, setActiveIndex] = useState(0);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +61,10 @@ export default function FeaturedCarousel({ products }: { products: Product[] }) 
 
   return (
     <section className="featured-carousel">
-      <h2>Productos destacados</h2>
+      <Reveal className="featured-heading">
+        <span className="section-eyebrow">Selección especial</span>
+        <h2>Productos destacados</h2>
+      </Reveal>
 
       <div className="featured-carousel-wrap">
         <button
@@ -104,7 +108,7 @@ export default function FeaturedCarousel({ products }: { products: Product[] }) 
       </div>
 
       {active && (
-        <div className="featured-info">
+        <div className="featured-info" key={active.id}>
           <span className="featured-tag">Top venta</span>
           <h3>{active.name}</h3>
           <p>{formatPrice(active.price)}</p>

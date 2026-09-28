@@ -1,6 +1,7 @@
 .category-hero {
   text-align: center;
-  padding: 32px 20px 8px;
+  padding-top: 40px;
+  padding-bottom: 12px;
 }
 
 .category-hero h2 {
@@ -8,8 +9,22 @@
   margin-bottom: 8px;
 }
 
+.category-hero h2 {
+  text-wrap: balance;
+}
+
 .category-hero p {
   color: var(--color-muted);
+}
+
+.category-hero::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 2px;
+  margin: 16px auto 0;
+  border-radius: 2px;
+  background: var(--color-primary);
 }
 
 @media (min-width: 768px) {

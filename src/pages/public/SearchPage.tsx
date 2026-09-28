@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useProducts } from "../../context/ProductsContext";
 import { normalizeSearch } from "../../lib/slug";
 import ProductGrid from "../../components/ProductGrid";
-import LoadingSpinner from "../../components/LoadingSpinner";
 import "./SearchPage.css";
 
 export default function SearchPage() {
@@ -28,10 +27,8 @@ export default function SearchPage() {
         autoFocus
       />
 
-      {loading ? (
-        <LoadingSpinner />
-      ) : query.trim() ? (
-        <ProductGrid products={results} />
+      {query.trim() ? (
+        <ProductGrid products={results} loading={loading} />
       ) : (
         <p className="search-hint">Escribe para encontrar tus productos favoritos.</p>
       )}

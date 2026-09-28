@@ -14,7 +14,7 @@
     0 0 0 4px rgba(255, 95, 158, 0.18),
     0 8px 24px rgba(255, 95, 158, 0.45);
   animation: whatsapp-glow 2.4s ease-in-out infinite;
-  transition: box-shadow var(--transition);
+  transition: box-shadow var(--transition), transform 0.25s cubic-bezier(0.3, 1.5, 0.5, 1);
 }
 
 .whatsapp-fab.is-dragging {
@@ -35,4 +35,88 @@
       0 0 0 10px rgba(255, 95, 158, 0.12),
       0 8px 30px rgba(255, 95, 158, 0.6);
   }
+}
+
+.whatsapp-fab:hover {
+  transform: scale(1.06);
+}
+
+.whatsapp-fab:active {
+  transform: scale(0.94);
+}
+
+.whatsapp-bubble {
+  position: fixed;
+  z-index: 499;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: min(240px, calc(100vw - 110px));
+  padding: 10px 10px 10px 16px;
+  background: #fff;
+  color: var(--color-ink);
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(43, 22, 32, 0.18);
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.85);
+  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.whatsapp-bubble.is-left {
+  transform-origin: right center;
+}
+
+.whatsapp-bubble.is-right {
+  transform-origin: left center;
+}
+
+.whatsapp-bubble.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(-50%) scale(1);
+}
+
+.whatsapp-bubble::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  transform: translateY(-50%) rotate(45deg);
+  border-radius: 2px;
+}
+
+.whatsapp-bubble.is-left::after {
+  right: -5px;
+}
+
+.whatsapp-bubble.is-right::after {
+  left: -5px;
+}
+
+.whatsapp-bubble button {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-bg-soft);
+  color: var(--color-muted);
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.whatsapp-bubble button:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
 }

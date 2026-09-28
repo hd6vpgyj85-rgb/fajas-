@@ -31,6 +31,13 @@ export interface PublicCustomer {
   name: string;
   purchasesCount: number;
   availableReviews: number;
+  accessCode: string;
+}
+
+export interface CheckoutCustomer {
+  id: string;
+  token: string;
+  accessCode: string;
 }
 
 export interface SubmitReviewInput {
@@ -66,7 +73,8 @@ interface LoyaltyContextValue {
   updateTier: (id: string, input: NewTierInput) => Promise<void>;
   deleteTier: (id: string) => Promise<void>;
   getCustomerByToken: (token: string) => Promise<PublicCustomer | null>;
-  getOrCreateCustomerForCheckout: (name: string, phone: string) => Promise<{ id: string; token: string }>;
+  getOrCreateCustomerForCheckout: (name: string, phone: string) => Promise<CheckoutCustomer>;
+  findTokenByAccess: (phone: string, code: string) => Promise<string | null>;
   submitReview: (token: string, input: SubmitReviewInput) => Promise<void>;
   requestClaim: (token: string, tierId: string) => Promise<void>;
   getClaimsByToken: (token: string) => Promise<LoyaltyClaim[]>;
@@ -150,13 +158,26 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
     const { data, error } = await supabase.rpc("get_customer_by_token", { p_token: token }).maybeSingle();
     if (error) throw new Error(error.message);
     if (!data) return null;
-    const row = data as { id: string; name: string; purchases_count: number; available_reviews: number };
+    const row = data as {
+      id: string;
+      name: string;
+      purchases_count: number;
+      available_reviews: number;
+      access_code: string;
+    };
     return {
       id: row.id,
       name: row.name,
       purchasesCount: row.purchases_count,
       availableReviews: row.available_reviews,
+      accessCode: row.access_code,
     };
+  };
+
+  const findTokenByAccess = async (phone: string, code: string) => {
+    const { data, error } = await supabase.rpc("find_loyalty_token", { p_phone: phone, p_code: code });
+    if (error) throw new Error(error.message);
+    return (data as string | null) ?? null;
   };
 
   const submitReview = async (token: string, input: SubmitReviewInput) => {
@@ -175,13 +196,13 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const getOrCreateCustomerForCheckout = async (name: string, phone: string) => {
+  const getOrCreateCustomerForCheckout = async (name: string, phone: string): Promise<CheckoutCustomer> => {
     const { data, error } = await supabase
       .rpc("get_or_create_customer_for_checkout", { p_name: name, p_phone: phone })
       .single();
     if (error) throw new Error(error.message);
-    const row = data as { id: string; token: string };
-    return { id: row.id, token: row.token };
+    const row = data as { id: string; token: string; access_code: string };
+    return { id: row.id, token: row.token, accessCode: row.access_code };
   };
 
   const requestClaim = async (token: string, tierId: string) => {
@@ -239,6 +260,7 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
         deleteTier,
         getCustomerByToken,
         getOrCreateCustomerForCheckout,
+        findTokenByAccess,
         submitReview,
         requestClaim,
         getClaimsByToken,

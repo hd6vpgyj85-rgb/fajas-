@@ -224,11 +224,29 @@ grant execute on function redeem_coupon(text) to anon, authenticated;
 -- =========================================================
 -- CLIENTES (FIDELIDAD)
 -- =========================================================
+-- Código corto (6 caracteres, sin 0/O/1/I) para recuperar la tarjeta con
+-- WhatsApp + código si el cliente pierde su link.
+create or replace function generate_access_code()
+returns text
+language plpgsql
+as $$
+declare
+  v_alphabet text := 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  v_code text := '';
+begin
+  for i in 1..6 loop
+    v_code := v_code || substr(v_alphabet, floor(random() * length(v_alphabet) + 1)::int, 1);
+  end loop;
+  return v_code;
+end;
+$$;
+
 create table customers (
   id uuid primary key default gen_random_uuid(),
   name text not null,
   phone text not null,
   token text not null unique default encode(gen_random_bytes(16), 'hex'),
+  access_code text not null unique default generate_access_code(),
   purchases_count integer not null default 0 check (purchases_count >= 0),
   notes text,
   created_at timestamptz not null default now()
@@ -288,7 +306,7 @@ alter table reviews add column if not exists customer_id uuid references custome
 
 drop function if exists get_customer_by_token(text);
 create or replace function get_customer_by_token(p_token text)
-returns table(id uuid, name text, purchases_count integer, available_reviews integer)
+returns table(id uuid, name text, purchases_count integer, available_reviews integer, access_code text)
 language plpgsql
 security definer
 set search_path = public
@@ -299,13 +317,34 @@ begin
       c.id,
       c.name,
       c.purchases_count,
-      greatest(c.purchases_count - (select count(*)::int from reviews r where r.customer_id = c.id), 0) as available_reviews
+      greatest(c.purchases_count - (select count(*)::int from reviews r where r.customer_id = c.id), 0) as available_reviews,
+      c.access_code
     from customers c
     where c.token = p_token;
 end;
 $$;
 
 grant execute on function get_customer_by_token(text) to anon, authenticated;
+
+create or replace function find_loyalty_token(p_phone text, p_code text)
+returns text
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_token text;
+begin
+  select c.token into v_token
+  from customers c
+  where right(regexp_replace(c.phone, '\D', '', 'g'), 10) = right(regexp_replace(p_phone, '\D', '', 'g'), 10)
+    and c.access_code = upper(trim(p_code))
+  limit 1;
+  return v_token;
+end;
+$$;
+
+grant execute on function find_loyalty_token(text, text) to anon, authenticated;
 
 create or replace function submit_customer_review(
   p_token text,
@@ -344,8 +383,9 @@ $$;
 
 grant execute on function submit_customer_review(text, text, integer, text, text) to anon, authenticated;
 
+drop function if exists get_or_create_customer_for_checkout(text, text);
 create or replace function get_or_create_customer_for_checkout(p_name text, p_phone text)
-returns table(id uuid, token text)
+returns table(id uuid, token text, access_code text)
 language plpgsql
 security definer
 set search_path = public
@@ -354,22 +394,23 @@ declare
   v_digits text := right(regexp_replace(p_phone, '\D', '', 'g'), 10);
   v_id uuid;
   v_token text;
+  v_code text;
 begin
-  select c.id, c.token into v_id, v_token
+  select c.id, c.token, c.access_code into v_id, v_token, v_code
   from customers c
   where right(regexp_replace(c.phone, '\D', '', 'g'), 10) = v_digits
   limit 1;
 
   if found then
-    return query select v_id, v_token;
+    return query select v_id, v_token, v_code;
     return;
   end if;
 
   insert into customers (name, phone, purchases_count)
   values (p_name, p_phone, 0)
-  returning customers.id, customers.token into v_id, v_token;
+  returning customers.id, customers.token, customers.access_code into v_id, v_token, v_code;
 
-  return query select v_id, v_token;
+  return query select v_id, v_token, v_code;
 end;
 $$;
 

@@ -1,4 +1,5 @@
 import { useSiteSettings } from "../context/SiteSettingsContext";
+import Reveal from "./Reveal";
 import "./VisitUs.css";
 
 export default function VisitUs() {
@@ -6,10 +7,11 @@ export default function VisitUs() {
 
   return (
     <section className="visit-us">
-      <div className="visit-us-image">
+      <Reveal className="visit-us-image">
         <img src={settings.storePhoto ?? undefined} alt={settings.businessName} loading="lazy" />
-      </div>
-      <div className="visit-us-info">
+      </Reveal>
+      <Reveal className="visit-us-info" delay={0.12}>
+        <span className="section-eyebrow">Nuestra tienda</span>
         <h2>Viste con estilo</h2>
         <p>Visítanos en tienda y encuentra la pieza perfecta para ti.</p>
         <div className="visit-us-detail">
@@ -25,7 +27,7 @@ export default function VisitUs() {
             Cómo llegar
           </a>
         )}
-      </div>
+      </Reveal>
     </section>
   );
 }

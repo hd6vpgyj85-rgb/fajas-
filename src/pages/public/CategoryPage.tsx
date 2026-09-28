@@ -9,7 +9,6 @@ import ProductFilters, { applyFilter, type ActiveFilter } from "../../components
 import ProductGrid from "../../components/ProductGrid";
 import FeaturedCarousel from "../../components/FeaturedCarousel";
 import CategoryFooter from "../../components/CategoryFooter";
-import LoadingSpinner from "../../components/LoadingSpinner";
 
 function initialFilterFromParams(params: URLSearchParams): ActiveFilter {
   const marca = params.get("marca");
@@ -37,7 +36,7 @@ export default function CategoryPage({ category }: { category: Category }) {
 
       <div className="container">
         <ProductFilters products={categoryProducts} active={filter} onChange={setFilter} />
-        {loading ? <LoadingSpinner /> : <ProductGrid products={filtered} />}
+        <ProductGrid products={filtered} loading={loading} />
       </div>
 
       <FeaturedCarousel products={categoryProducts} />

@@ -8,19 +8,33 @@ html,
 body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
   width: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-body);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: clip;
 }
 
 #root {
-  overflow-x: hidden;
+  overflow-x: clip;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
 }
 
 h1,
@@ -30,6 +44,7 @@ h4 {
   font-family: var(--font-display);
   margin: 0;
   line-height: 1.15;
+  letter-spacing: -0.01em;
 }
 
 p {
@@ -57,13 +72,31 @@ ul {
   list-style: none;
 }
 
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
 .container {
   max-width: var(--container-max);
   margin: 0 auto;
   padding: 0 20px;
 }
 
+.section-eyebrow {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: 10px;
+}
+
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -73,7 +106,13 @@ ul {
   border: none;
   font-weight: 600;
   font-size: 0.95rem;
-  transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform var(--transition),
+    box-shadow var(--transition),
+    background var(--transition),
+    color var(--transition);
   white-space: nowrap;
 }
 
@@ -87,8 +126,27 @@ ul {
   box-shadow: var(--shadow-soft);
 }
 
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  z-index: -1;
+  transition: left 0.6s ease;
+}
+
 .btn-primary:hover {
   background: var(--color-primary-dark);
+  box-shadow: 0 12px 28px rgba(179, 53, 90, 0.28);
+  transform: translateY(-1px);
+}
+
+.btn-primary:hover::after {
+  left: 125%;
 }
 
 .btn-outline {
@@ -99,6 +157,7 @@ ul {
 
 .btn-outline:hover {
   background: var(--color-primary-light);
+  transform: translateY(-1px);
 }
 
 .btn-block {
@@ -122,6 +181,7 @@ ul {
   text-transform: uppercase;
   letter-spacing: 0.03em;
   z-index: 2;
+  animation: pop-in 0.4s cubic-bezier(0.3, 1.6, 0.5, 1) both;
 }
 
 .badge-sale {
@@ -142,6 +202,94 @@ ul {
   clip: rect(0 0 0 0);
 }
 
+.page-enter {
+  animation: page-in 0.45s ease both;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-bg-soft), var(--color-bg-alt), var(--color-bg-soft));
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes bump {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 ::selection {
   background: var(--color-primary-light);
   color: var(--color-primary-dark);
@@ -155,4 +303,20 @@ ul {
 ::-webkit-scrollbar-thumb {
   background: var(--color-primary-light);
   border-radius: var(--radius-pill);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
 }

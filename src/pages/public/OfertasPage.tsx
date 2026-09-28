@@ -8,7 +8,6 @@ import ProductFilters, { applyFilter, type ActiveFilter } from "../../components
 import ProductGrid from "../../components/ProductGrid";
 import FeaturedCarousel from "../../components/FeaturedCarousel";
 import CategoryFooter from "../../components/CategoryFooter";
-import LoadingSpinner from "../../components/LoadingSpinner";
 
 export default function OfertasPage() {
   const { products, loading } = useProducts();
@@ -26,7 +25,7 @@ export default function OfertasPage() {
 
       <div className="container">
         <ProductFilters products={onSaleProducts} active={filter} onChange={setFilter} />
-        {loading ? <LoadingSpinner /> : <ProductGrid products={filtered} />}
+        <ProductGrid products={filtered} loading={loading} />
       </div>
 
       <FeaturedCarousel products={onSaleProducts} />
