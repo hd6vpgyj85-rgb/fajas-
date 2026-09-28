@@ -1,5 +1,5 @@
 import { formatPrice } from "./format";
-import type { CartLine, OrderAddress, OrderCustomer } from "../types";
+import { SHIPPING_METHOD_LABELS, type CartLine, type OrderAddress, type OrderCustomer, type ShippingMethod } from "../types";
 
 interface CheckoutMessageParams {
   businessName: string;
@@ -10,12 +10,14 @@ interface CheckoutMessageParams {
   total: number;
   customer: OrderCustomer;
   address: OrderAddress;
+  shippingMethod: ShippingMethod;
   paymentMethod: string;
   notes?: string;
 }
 
 export function buildCheckoutMessage(params: CheckoutMessageParams): string {
-  const { businessName, items, subtotal, discount, couponCode, total, customer, address, paymentMethod, notes } = params;
+  const { businessName, items, subtotal, discount, couponCode, total, customer, address, shippingMethod, paymentMethod, notes } =
+    params;
 
   const lines: string[] = [];
   lines.push(`*Nuevo pedido — ${businessName}*`);
@@ -37,11 +39,16 @@ export function buildCheckoutMessage(params: CheckoutMessageParams): string {
   lines.push(`Teléfono: ${customer.telefono}`);
   if (customer.correo) lines.push(`Correo: ${customer.correo}`);
   lines.push("");
-  lines.push("*Dirección de envío:*");
-  lines.push(`${address.calle}, ${address.colonia}`);
-  lines.push(`${address.ciudad}, ${address.estado}, CP ${address.codigoPostal}`);
-  lines.push(address.pais);
-  if (address.referencias) lines.push(`Referencias: ${address.referencias}`);
+  lines.push(`*Método de entrega:* ${SHIPPING_METHOD_LABELS[shippingMethod]}`);
+  if (shippingMethod === "punto-medio") {
+    lines.push("Coordinamos el lugar y la hora exactos por este WhatsApp.");
+    if (address.referencias) lines.push(`Zona o referencia preferida: ${address.referencias}`);
+  } else {
+    lines.push(`${address.calle}, ${address.colonia}`);
+    lines.push(`${address.ciudad}, ${address.estado}, CP ${address.codigoPostal}`);
+    lines.push(address.pais);
+    if (address.referencias) lines.push(`Referencias: ${address.referencias}`);
+  }
   lines.push("");
   lines.push(`*Método de pago:* ${paymentMethod}`);
   if (notes) {

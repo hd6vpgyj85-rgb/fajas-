@@ -93,12 +93,20 @@ export interface OrderItem {
   price: number;
 }
 
+export type ShippingMethod = "punto-medio" | "nacional";
+
+export const SHIPPING_METHOD_LABELS: Record<ShippingMethod, string> = {
+  "punto-medio": "Punto medio en Cd. Juárez",
+  nacional: "Envío a otras partes de México",
+};
+
 export interface Order {
   id: string;
   createdAt: string;
   status: OrderStatus;
   customer: OrderCustomer;
   address: OrderAddress;
+  shippingMethod: ShippingMethod;
   paymentMethod: string;
   notes?: string | null;
   items: OrderItem[];

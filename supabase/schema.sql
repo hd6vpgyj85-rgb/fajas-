@@ -116,12 +116,15 @@ create table orders (
   status text not null default 'pendiente',
   customer jsonb not null,
   address jsonb not null,
+  shipping_method text not null default 'punto-medio',
   payment_method text not null,
   notes text,
   items jsonb not null,
   total numeric not null,
   archived_at timestamptz
 );
+
+alter table orders add column if not exists shipping_method text not null default 'punto-medio';
 
 alter table orders enable row level security;
 

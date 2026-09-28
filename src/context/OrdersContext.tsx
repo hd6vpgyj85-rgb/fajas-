@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { supabase } from "../lib/supabase";
-import type { Order, OrderAddress, OrderCustomer, OrderItem, OrderStatus } from "../types";
+import type { Order, OrderAddress, OrderCustomer, OrderItem, OrderStatus, ShippingMethod } from "../types";
 
 interface OrderRow {
   id: string;
@@ -8,6 +8,7 @@ interface OrderRow {
   status: OrderStatus;
   customer: OrderCustomer;
   address: OrderAddress;
+  shipping_method: ShippingMethod;
   payment_method: string;
   notes: string | null;
   items: OrderItem[];
@@ -22,6 +23,7 @@ function rowToOrder(row: OrderRow): Order {
     status: row.status,
     customer: row.customer,
     address: row.address,
+    shippingMethod: row.shipping_method ?? "punto-medio",
     paymentMethod: row.payment_method,
     notes: row.notes,
     items: row.items,
@@ -33,6 +35,7 @@ function rowToOrder(row: OrderRow): Order {
 export interface NewOrderInput {
   customer: OrderCustomer;
   address: OrderAddress;
+  shippingMethod: ShippingMethod;
   paymentMethod: string;
   notes?: string;
   items: OrderItem[];
@@ -78,6 +81,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
         status: "pendiente",
         customer: input.customer,
         address: input.address,
+        shipping_method: input.shippingMethod,
         payment_method: input.paymentMethod,
         notes: input.notes ?? null,
         items: input.items,

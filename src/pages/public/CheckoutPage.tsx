@@ -9,6 +9,7 @@ import { formatPrice } from "../../lib/format";
 import { buildCheckoutMessage } from "../../lib/whatsapp";
 import { getWhatsAppUrl } from "../../data/store";
 import { generateLoyaltyQrDataUrl, getLoyaltyCardUrl } from "../../lib/loyaltyQr";
+import type { OrderAddress, ShippingMethod } from "../../types";
 import "./CheckoutPage.css";
 
 const PAYMENT_METHODS = ["Efectivo contra entrega", "Transferencia bancaria", "Depósito en tienda"];
@@ -28,6 +29,8 @@ export default function CheckoutPage() {
   const { getOrCreateCustomerForCheckout } = useLoyalty();
   const { settings } = useSiteSettings();
   const navigate = useNavigate();
+
+  const [shippingMethod, setShippingMethod] = useState<ShippingMethod>("punto-medio");
 
   const [form, setForm] = useState({
     nombre: "",
@@ -87,15 +90,26 @@ export default function CheckoutPage() {
 
     try {
       const customer = { nombre: form.nombre, apellido: form.apellido, telefono: form.telefono, correo: form.correo || undefined };
-      const address = {
-        calle: form.calle,
-        colonia: form.colonia,
-        ciudad: form.ciudad,
-        estado: form.estado,
-        codigoPostal: form.codigoPostal,
-        pais: form.pais,
-        referencias: form.referencias || undefined,
-      };
+      const address: OrderAddress =
+        shippingMethod === "nacional"
+          ? {
+              calle: form.calle,
+              colonia: form.colonia,
+              ciudad: form.ciudad,
+              estado: form.estado,
+              codigoPostal: form.codigoPostal,
+              pais: form.pais,
+              referencias: form.referencias || undefined,
+            }
+          : {
+              calle: "Punto medio en Cd. Juárez",
+              colonia: "",
+              ciudad: "Ciudad Juárez",
+              estado: "Chihuahua",
+              codigoPostal: "",
+              pais: "México",
+              referencias: form.referencias || undefined,
+            };
       const items = lines.map((l) => ({
         productId: l.productId,
         name: l.name,
@@ -107,6 +121,7 @@ export default function CheckoutPage() {
       const orderId = await createOrder({
         customer,
         address,
+        shippingMethod,
         paymentMethod: form.paymentMethod,
         notes: form.notes || undefined,
         items,
@@ -124,6 +139,7 @@ export default function CheckoutPage() {
         total,
         customer,
         address,
+        shippingMethod,
         paymentMethod: form.paymentMethod,
         notes: form.notes || undefined,
       });
@@ -193,6 +209,26 @@ export default function CheckoutPage() {
 
       <form className="checkout-form" onSubmit={handleSubmit}>
         <section>
+          <h2>Método de entrega</h2>
+          <div className="shipping-methods">
+            <button
+              type="button"
+              className={`shipping-method-card ${shippingMethod === "punto-medio" ? "is-selected" : ""}`}
+              onClick={() => setShippingMethod("punto-medio")}
+            >
+              <span className="shipping-method-badge">Disponible</span>
+              <strong>Punto medio en Cd. Juárez</strong>
+              <p>Nos escribes por WhatsApp con tu pedido y coordinamos el lugar y la hora para entregártelo.</p>
+            </button>
+            <button type="button" className="shipping-method-card is-disabled" disabled aria-disabled="true">
+              <span className="shipping-method-badge is-soon">Próximamente</span>
+              <strong>Envío a otras partes de México</strong>
+              <p>Muy pronto podrás recibir tu pedido por paquetería en cualquier estado del país.</p>
+            </button>
+          </div>
+        </section>
+
+        <section>
           <h2>Datos personales</h2>
           <div className="checkout-row">
             <input required placeholder="Nombre" value={form.nombre} onChange={update("nombre")} />
@@ -204,19 +240,40 @@ export default function CheckoutPage() {
           </div>
         </section>
 
-        <section>
-          <h2>Dirección de envío</h2>
-          <input required placeholder="Calle y número" value={form.calle} onChange={update("calle")} />
-          <div className="checkout-row">
-            <input required placeholder="Colonia" value={form.colonia} onChange={update("colonia")} />
-            <input required placeholder="Código postal" value={form.codigoPostal} onChange={update("codigoPostal")} />
-          </div>
-          <div className="checkout-row">
-            <input required placeholder="Ciudad" value={form.ciudad} onChange={update("ciudad")} />
-            <input required placeholder="Estado" value={form.estado} onChange={update("estado")} />
-          </div>
-          <input placeholder="Referencias (opcional)" value={form.referencias} onChange={update("referencias")} />
-        </section>
+        {shippingMethod === "nacional" ? (
+          <section>
+            <h2>Dirección de envío</h2>
+            <input required placeholder="Calle y número" value={form.calle} onChange={update("calle")} />
+            <div className="checkout-row">
+              <input required placeholder="Colonia" value={form.colonia} onChange={update("colonia")} />
+              <input required placeholder="Código postal" value={form.codigoPostal} onChange={update("codigoPostal")} />
+            </div>
+            <div className="checkout-row">
+              <input required placeholder="Ciudad" value={form.ciudad} onChange={update("ciudad")} />
+              <input required placeholder="Estado" value={form.estado} onChange={update("estado")} />
+            </div>
+            <input placeholder="Referencias (opcional)" value={form.referencias} onChange={update("referencias")} />
+          </section>
+        ) : (
+          <section>
+            <h2>Punto de entrega</h2>
+            <div className="checkout-meetup-note">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" strokeLinejoin="round" />
+                <circle cx="12" cy="9.5" r="2.5" />
+              </svg>
+              <p>
+                Al confirmar tu pedido te escribimos por WhatsApp para acordar contigo el lugar y la hora exactos dentro de
+                Cd. Juárez.
+              </p>
+            </div>
+            <input
+              placeholder="Zona o lugar de encuentro preferido (opcional)"
+              value={form.referencias}
+              onChange={update("referencias")}
+            />
+          </section>
+        )}
 
         <section>
           <h2>Método de pago</h2>

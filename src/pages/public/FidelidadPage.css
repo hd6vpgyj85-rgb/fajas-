@@ -480,6 +480,39 @@
   font-size: 0.85rem;
 }
 
+.loyalty-review-guide {
+  width: 100%;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  background: rgba(255, 111, 165, 0.07);
+  border: 1px solid rgba(255, 111, 165, 0.22);
+}
+
+.loyalty-review-guide-title {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--loyal-pink);
+  letter-spacing: 0.01em;
+}
+
+.loyalty-review-guide ol {
+  margin: 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--loyal-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.loyalty-review-guide li::marker {
+  color: var(--loyal-pink);
+  font-weight: 700;
+}
+
 .loyalty-reviews {
   padding: 22px 20px;
   border-radius: 18px;

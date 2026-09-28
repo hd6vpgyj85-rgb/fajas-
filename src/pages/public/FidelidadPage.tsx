@@ -303,6 +303,17 @@ export default function FidelidadPage() {
 
       <section className="loyalty-section">
         <h2>Tus reseñas</h2>
+
+        <div className="loyalty-review-guide">
+          <p className="loyalty-review-guide-title">¿Cómo dejar tu reseña?</p>
+          <ol>
+            <li>Cada compra te da derecho a 1 reseña — la ves reflejada aquí abajo.</li>
+            <li>Ponle tus estrellas y cuéntanos cómo te fue con tu pedido.</li>
+            <li>Si quieres, agrega una foto de tu producto.</li>
+            <li>Envíala: la revisamos y la publicamos en el sitio en cuanto la aprobemos 💗</li>
+          </ol>
+        </div>
+
         <div className="loyalty-reviews">
           <div className="loyalty-reviews-count">
             <span className="loyalty-reviews-number">{customer.availableReviews}</span>

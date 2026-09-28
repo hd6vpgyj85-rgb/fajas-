@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useOrders } from "../../context/OrdersContext";
 import { formatDateTime, formatPrice } from "../../lib/format";
-import type { OrderStatus } from "../../types";
+import { SHIPPING_METHOD_LABELS, type OrderStatus } from "../../types";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import "./adminShared.css";
 
@@ -46,6 +46,9 @@ export default function OrdersPage() {
               <p style={{ color: "var(--color-muted)", fontSize: "0.85rem", marginBottom: 8 }}>
                 {formatDateTime(order.createdAt)} · {order.items.length} artículos · {formatPrice(order.total)}
               </p>
+              <p style={{ color: "var(--color-primary-dark)", fontSize: "0.85rem", fontWeight: 600, marginBottom: 8 }}>
+                {SHIPPING_METHOD_LABELS[order.shippingMethod]} · Tel: {order.customer.telefono}
+              </p>
               <ul style={{ marginBottom: 12 }}>
                 {order.items.map((item, i) => (
                   <li key={i} style={{ fontSize: "0.85rem", color: "var(--color-muted)" }}>
@@ -53,6 +56,14 @@ export default function OrdersPage() {
                   </li>
                 ))}
               </ul>
+              {order.shippingMethod === "punto-medio" && order.address.referencias && (
+                <p style={{ fontSize: "0.85rem", color: "var(--color-muted)", marginBottom: 12 }}>
+                  Zona preferida: {order.address.referencias}
+                </p>
+              )}
+              {order.notes && (
+                <p style={{ fontSize: "0.85rem", color: "var(--color-muted)", marginBottom: 12 }}>Notas: {order.notes}</p>
+              )}
               <div className="product-form-actions">
                 <select value={order.status} onChange={(e) => updateStatus(order.id, e.target.value as OrderStatus)}>
                   {STATUS_OPTIONS.map((s) => (
