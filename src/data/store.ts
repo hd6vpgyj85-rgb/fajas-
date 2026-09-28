@@ -18,6 +18,8 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   facebookUrl: "https://facebook.com/beautylat.mx",
   tiktokUrl: null,
   mapUrl: "https://maps.google.com/?q=Beautylat+Ciudad+Juarez",
+  orderNotifyUrl: null,
+  orderNotifySecret: null,
   updatedAt: new Date(0).toISOString(),
 };
 

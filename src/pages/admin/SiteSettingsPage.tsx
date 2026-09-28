@@ -84,6 +84,8 @@ function SiteSettingsForm({ initial }: { initial: SiteSettings }) {
   const [facebookUrl, setFacebookUrl] = useState(initial.facebookUrl ?? "");
   const [tiktokUrl, setTiktokUrl] = useState(initial.tiktokUrl ?? "");
   const [mapUrl, setMapUrl] = useState(initial.mapUrl ?? "");
+  const [orderNotifyUrl, setOrderNotifyUrl] = useState(initial.orderNotifyUrl ?? "");
+  const [orderNotifySecret, setOrderNotifySecret] = useState(initial.orderNotifySecret ?? "");
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -123,6 +125,8 @@ function SiteSettingsForm({ initial }: { initial: SiteSettings }) {
       facebookUrl: facebookUrl.trim() || null,
       tiktokUrl: tiktokUrl.trim() || null,
       mapUrl: mapUrl.trim() || null,
+      orderNotifyUrl: orderNotifyUrl.trim() || null,
+      orderNotifySecret: orderNotifySecret.trim() || null,
     };
 
     try {
@@ -230,6 +234,30 @@ function SiteSettingsForm({ initial }: { initial: SiteSettings }) {
         <div className="admin-form-field">
           <label>TikTok</label>
           <input value={tiktokUrl} onChange={(e) => setTiktokUrl(e.target.value)} placeholder="https://tiktok.com/@…" />
+        </div>
+      </section>
+
+      <section className="site-settings-section">
+        <h2>Notificación de pedidos por correo (opcional)</h2>
+        <p className="site-settings-hint">
+          Para que te llegue un correo a Gmail cada vez que entra un pedido, conecta un script de Google Apps Script y
+          pega aquí la URL que te da al publicarlo. Deja estos campos vacíos si todavía no lo configuras.
+        </p>
+        <div className="admin-form-field">
+          <label>URL de notificación</label>
+          <input
+            value={orderNotifyUrl}
+            onChange={(e) => setOrderNotifyUrl(e.target.value)}
+            placeholder="https://script.google.com/macros/s/…/exec"
+          />
+        </div>
+        <div className="admin-form-field">
+          <label>Clave secreta</label>
+          <input
+            value={orderNotifySecret}
+            onChange={(e) => setOrderNotifySecret(e.target.value)}
+            placeholder="La misma clave que pusiste en el script"
+          />
         </div>
       </section>
 

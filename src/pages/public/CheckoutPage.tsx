@@ -9,6 +9,7 @@ import { formatPrice } from "../../lib/format";
 import { buildCheckoutMessage } from "../../lib/whatsapp";
 import { getWhatsAppUrl } from "../../data/store";
 import { generateLoyaltyQrDataUrl, getLoyaltyCardUrl } from "../../lib/loyaltyQr";
+import { notifyOwnerOfOrder } from "../../lib/orderNotify";
 import type { OrderAddress, ShippingMethod } from "../../types";
 import "./CheckoutPage.css";
 
@@ -121,6 +122,17 @@ export default function CheckoutPage() {
       }));
 
       const orderId = await createOrder({
+        customer,
+        address,
+        shippingMethod,
+        paymentMethod: form.paymentMethod,
+        notes: form.notes || undefined,
+        items,
+        total,
+      });
+
+      notifyOwnerOfOrder(settings.orderNotifyUrl, settings.orderNotifySecret, {
+        id: orderId,
         customer,
         address,
         shippingMethod,

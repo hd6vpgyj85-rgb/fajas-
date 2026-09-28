@@ -207,5 +207,7 @@ export interface SiteSettings {
   facebookUrl?: string | null;
   tiktokUrl?: string | null;
   mapUrl?: string | null;
+  orderNotifyUrl?: string | null;
+  orderNotifySecret?: string | null;
   updatedAt: string;
 }

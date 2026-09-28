@@ -21,6 +21,8 @@ interface SiteSettingsRow {
   facebook_url: string | null;
   tiktok_url: string | null;
   map_url: string | null;
+  order_notify_url: string | null;
+  order_notify_secret: string | null;
   updated_at: string;
 }
 
@@ -43,6 +45,8 @@ function rowToSettings(row: SiteSettingsRow): SiteSettings {
     facebookUrl: row.facebook_url,
     tiktokUrl: row.tiktok_url,
     mapUrl: row.map_url,
+    orderNotifyUrl: row.order_notify_url,
+    orderNotifySecret: row.order_notify_secret,
     updatedAt: row.updated_at,
   };
 }
@@ -68,6 +72,8 @@ function settingsToRow(settings: SiteSettingsInput): Omit<SiteSettingsRow, "upda
     facebook_url: settings.facebookUrl ?? null,
     tiktok_url: settings.tiktokUrl ?? null,
     map_url: settings.mapUrl ?? null,
+    order_notify_url: settings.orderNotifyUrl ?? null,
+    order_notify_secret: settings.orderNotifySecret ?? null,
   };
 }
 

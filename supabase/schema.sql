@@ -557,8 +557,13 @@ create table site_settings (
   facebook_url text,
   tiktok_url text,
   map_url text,
+  order_notify_url text,
+  order_notify_secret text,
   updated_at timestamptz not null default now()
 );
+
+alter table site_settings add column if not exists order_notify_url text;
+alter table site_settings add column if not exists order_notify_secret text;
 
 alter table site_settings enable row level security;
 
