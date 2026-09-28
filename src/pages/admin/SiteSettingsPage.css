@@ -45,6 +45,12 @@
   flex: none;
 }
 
+.site-settings-image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .site-settings-image-grid {
   display: grid;
   grid-template-columns: 1fr;

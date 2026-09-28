@@ -26,7 +26,7 @@ function ImageField({
 }: {
   label: string;
   value: string | null | undefined;
-  onChange: (url: string) => void;
+  onChange: (url: string | null) => void;
 }) {
   const [uploading, setUploading] = useState(false);
 
@@ -48,10 +48,17 @@ function ImageField({
       <span className="site-settings-image-label">{label}</span>
       <div className="site-settings-image-row">
         {value ? <img src={value} alt={label} /> : <div className="site-settings-image-placeholder" />}
-        <label className="admin-btn-sm">
-          {uploading ? "Subiendo…" : "Cambiar"}
-          <input type="file" accept="image/*" hidden onChange={(e) => handleUpload(e.target.files?.[0])} />
-        </label>
+        <div className="site-settings-image-actions">
+          <label className="admin-btn-sm">
+            {uploading ? "Subiendo…" : "Cambiar"}
+            <input type="file" accept="image/*" hidden onChange={(e) => handleUpload(e.target.files?.[0])} />
+          </label>
+          {value && (
+            <button type="button" className="admin-btn-sm danger" onClick={() => onChange(null)}>
+              Quitar
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -82,8 +89,15 @@ function SiteSettingsForm({ initial }: { initial: SiteSettings }) {
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  const setCategoryImage = (key: CategoryImageKey, url: string) => {
-    setCategoryImages((prev) => ({ ...prev, [key]: url }));
+  const setCategoryImage = (key: CategoryImageKey, url: string | null) => {
+    setCategoryImages((prev) => {
+      if (url === null) {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+      return { ...prev, [key]: url };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

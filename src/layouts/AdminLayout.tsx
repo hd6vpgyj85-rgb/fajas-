@@ -49,11 +49,18 @@ export default function AdminLayout() {
 
           <span className="admin-header-sep" />
 
-          <Link to="/" target="_blank" className="admin-header-link">
-            Ver sitio
+          <Link to="/" target="_blank" className="admin-header-icon" aria-label="Ver sitio" title="Ver sitio">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M14 4h6v6" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M10 14 20 4" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M18 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </Link>
-          <button className="admin-header-link" onClick={signOut}>
-            Cerrar sesión
+          <button className="admin-header-icon" onClick={signOut} aria-label="Cerrar sesión" title="Cerrar sesión">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M15 17v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M9 12h11m0 0-3-3m3 3-3 3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </button>
         </div>
       </header>
