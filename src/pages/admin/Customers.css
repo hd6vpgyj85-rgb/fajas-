@@ -1,0 +1,112 @@
+@import "./adminShared.css";
+
+.customer-card {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  border: 2px solid transparent;
+}
+
+.customer-card.has-pending {
+  border-color: #e8a23a;
+}
+
+.customer-pending-badge {
+  position: absolute;
+  top: -10px;
+  right: 14px;
+  background: #e8a23a;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.customer-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.customer-card-header strong {
+  font-size: 0.98rem;
+}
+
+.customer-card-header span {
+  font-size: 0.82rem;
+  color: var(--color-muted);
+}
+
+.customer-notes {
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  margin-bottom: 10px;
+}
+
+.customer-purchases {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--color-muted);
+}
+
+.customer-purchases-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.customer-purchases-stepper button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg-soft);
+}
+
+.customer-purchases-stepper strong {
+  min-width: 20px;
+  text-align: center;
+  color: var(--color-ink);
+}
+
+.customer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.qr-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.qr-modal img {
+  width: 220px;
+  height: 220px;
+}
+
+.qr-modal-url {
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  word-break: break-all;
+}
+
+.tiers-manager-toggle {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  border: none;
+  background: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+}

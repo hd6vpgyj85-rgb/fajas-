@@ -1,0 +1,107 @@
+@import "./adminShared.css";
+
+.product-form {
+  max-width: 640px;
+}
+
+.product-form-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.product-form-image {
+  position: relative;
+  width: 90px;
+  height: 110px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 2px solid transparent;
+}
+
+.product-form-image.is-cover {
+  border-color: var(--color-primary);
+}
+
+.product-form-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-form-cover-tag {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.6rem;
+  padding: 2px 6px;
+  border-radius: var(--radius-pill);
+}
+
+.product-form-image-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.product-form-image-actions button {
+  border: none;
+  background: none;
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 3px 0;
+}
+
+.product-form-upload {
+  width: 90px;
+  height: 110px;
+  border-radius: var(--radius-sm);
+  border: 1.5px dashed var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  cursor: pointer;
+  padding: 6px;
+}
+
+.product-form-sizes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.product-form-size-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-bg-soft);
+  padding: 6px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+}
+
+.product-form-size-chip button {
+  border: none;
+  background: none;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.product-form-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
