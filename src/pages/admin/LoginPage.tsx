@@ -19,7 +19,15 @@ export default function LoginPage() {
     setSubmitting(true);
     setError(null);
     const { error } = await signIn(email, password);
-    if (error) setError("Correo o contraseña incorrectos.");
+    if (error) {
+      if (error.toLowerCase().includes("email not confirmed")) {
+        setError("Este correo no está confirmado. Confírmalo desde Supabase → Authentication → Users.");
+      } else if (error.toLowerCase().includes("invalid login credentials")) {
+        setError("Correo o contraseña incorrectos.");
+      } else {
+        setError(error);
+      }
+    }
     setSubmitting(false);
   };
 
