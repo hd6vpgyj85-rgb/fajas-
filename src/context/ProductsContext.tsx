@@ -101,19 +101,19 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
 
   const createProduct = async (product: Product) => {
     const { error } = await supabase.from("products").insert(productToRow(product));
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 
   const updateProduct = async (product: Product) => {
     const { error } = await supabase.from("products").update(productToRow(product)).eq("id", product.id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 
   const deleteProduct = async (id: string) => {
     const { error, count } = await supabase.from("products").delete({ count: "exact" }).eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     if (!count) throw new Error("No se pudo eliminar el producto (bloqueado por permisos)");
     await refresh();
   };
@@ -123,7 +123,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       .from("products")
       .delete({ count: "exact" })
       .not("id", "is", null);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     if (!count) throw new Error("No se eliminó ningún producto (bloqueado por permisos)");
     await refresh();
   };

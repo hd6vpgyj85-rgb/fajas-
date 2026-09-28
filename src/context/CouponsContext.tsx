@@ -76,19 +76,19 @@ export function CouponsProvider({ children }: { children: ReactNode }) {
       usage_limit: input.usageLimit,
       active: true,
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 
   const toggleActive = async (code: string, active: boolean) => {
     const { error } = await supabase.from("coupons").update({ active }).eq("code", code);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 
   const deleteCoupon = async (code: string) => {
     const { error, count } = await supabase.from("coupons").delete({ count: "exact" }).eq("code", code);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     if (!count) throw new Error("No se pudo eliminar el cupón (bloqueado por permisos)");
     await refresh();
   };

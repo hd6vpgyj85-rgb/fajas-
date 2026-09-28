@@ -1,5 +1,5 @@
 .checkout-page {
-  padding: 32px 20px 60px;
+  padding: 32px 20px 80px;
   max-width: 640px;
 }
 
@@ -58,20 +58,6 @@
 .checkout-coupon-error {
   color: #b3261e;
   font-size: 0.85rem;
-}
-
-.checkout-review-toggle {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-}
-
-.checkout-review-fields {
-  margin-top: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
 }
 
 .checkout-summary {

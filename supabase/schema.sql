@@ -152,8 +152,8 @@ create table reviews (
 
 alter table reviews enable row level security;
 
-create policy "reviews_insert_public" on reviews
-  for insert to anon, authenticated with check (true);
+create policy "reviews_insert_admin" on reviews
+  for insert to authenticated with check (true);
 
 create policy "reviews_select_approved_public" on reviews
   for select to anon using (status = 'aprobada');
@@ -277,25 +277,72 @@ alter table loyalty_claims enable row level security;
 create policy "loyalty_claims_select_admin" on loyalty_claims
   for select to authenticated using (true);
 
+-- Reseñas ganadas por compras: cada +1 en purchases_count habilita una
+-- reseña. Se cuentan las reseñas ya vinculadas a ese cliente (sin importar
+-- su estado de moderación) para saber cuántas le quedan disponibles.
+alter table reviews add column if not exists customer_id uuid references customers(id) on delete set null;
+
 -- =========================================================
 -- FUNCIONES DE FIDELIDAD (security definer)
 -- =========================================================
 
+drop function if exists get_customer_by_token(text);
 create or replace function get_customer_by_token(p_token text)
-returns table(id uuid, name text, purchases_count integer)
+returns table(id uuid, name text, purchases_count integer, available_reviews integer)
 language plpgsql
 security definer
 set search_path = public
 as $$
 begin
   return query
-    select c.id, c.name, c.purchases_count
+    select
+      c.id,
+      c.name,
+      c.purchases_count,
+      greatest(c.purchases_count - (select count(*)::int from reviews r where r.customer_id = c.id), 0) as available_reviews
     from customers c
     where c.token = p_token;
 end;
 $$;
 
 grant execute on function get_customer_by_token(text) to anon, authenticated;
+
+create or replace function submit_customer_review(
+  p_token text,
+  p_name text,
+  p_rating integer,
+  p_quote text,
+  p_image text default null
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_customer_id uuid;
+  v_purchases integer;
+  v_used integer;
+begin
+  select id, purchases_count into v_customer_id, v_purchases
+  from customers where token = p_token;
+
+  if v_customer_id is null then
+    raise exception 'CLIENTE_NO_ENCONTRADO';
+  end if;
+
+  select count(*) into v_used from reviews where customer_id = v_customer_id;
+
+  if v_used >= v_purchases then
+    raise exception 'SIN_RESENAS_DISPONIBLES';
+  end if;
+
+  insert into reviews (name, rating, quote, image, status, customer_id)
+  values (p_name, p_rating, p_quote, p_image, 'pendiente', v_customer_id);
+end;
+$$;
+
+grant execute on function submit_customer_review(text, text, integer, text, text) to anon, authenticated;
 
 create or replace function get_or_create_customer_for_checkout(p_name text, p_phone text)
 returns table(id uuid, token text)

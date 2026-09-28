@@ -86,26 +86,26 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       .select("id")
       .single();
 
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
     return data.id as string;
   };
 
   const updateStatus = async (id: string, status: OrderStatus) => {
     const { error } = await supabase.from("orders").update({ status }).eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 
   const archiveOrder = async (id: string) => {
     const { error } = await supabase.from("orders").update({ archived_at: new Date().toISOString() }).eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 
   const restoreOrder = async (id: string) => {
     const { error } = await supabase.from("orders").update({ archived_at: null }).eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 

@@ -68,7 +68,7 @@ export function CustomersProvider({ children }: { children: ReactNode }) {
       .insert({ name: input.name, phone: input.phone, notes: input.notes ?? null, purchases_count: 0 })
       .select("*")
       .single();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
     return rowToCustomer(data as CustomerRow);
   };
@@ -78,13 +78,13 @@ export function CustomersProvider({ children }: { children: ReactNode }) {
       .from("customers")
       .update({ name: input.name, phone: input.phone, notes: input.notes ?? null })
       .eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 
   const deleteCustomer = async (id: string) => {
     const { error, count } = await supabase.from("customers").delete({ count: "exact" }).eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     if (!count) throw new Error("No se pudo eliminar el cliente (bloqueado por permisos)");
     await refresh();
   };
@@ -94,7 +94,7 @@ export function CustomersProvider({ children }: { children: ReactNode }) {
     if (!current) return;
     const next = Math.max(0, current.purchasesCount + delta);
     const { error } = await supabase.from("customers").update({ purchases_count: next }).eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 

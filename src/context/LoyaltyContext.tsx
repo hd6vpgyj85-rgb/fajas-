@@ -30,6 +30,14 @@ export interface PublicCustomer {
   id: string;
   name: string;
   purchasesCount: number;
+  availableReviews: number;
+}
+
+export interface SubmitReviewInput {
+  name: string;
+  rating: number;
+  quote: string;
+  image?: string | null;
 }
 
 interface ClaimRow {
@@ -59,6 +67,7 @@ interface LoyaltyContextValue {
   deleteTier: (id: string) => Promise<void>;
   getCustomerByToken: (token: string) => Promise<PublicCustomer | null>;
   getOrCreateCustomerForCheckout: (name: string, phone: string) => Promise<{ id: string; token: string }>;
+  submitReview: (token: string, input: SubmitReviewInput) => Promise<void>;
   requestClaim: (token: string, tierId: string) => Promise<void>;
   getClaimsByToken: (token: string) => Promise<LoyaltyClaim[]>;
   getClaimsByCustomerId: (customerId: string) => Promise<LoyaltyClaimAdmin[]>;
@@ -113,7 +122,7 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
       reward_description: input.rewardDescription,
       discount_percent: input.discountPercent ?? null,
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refreshTiers();
   };
 
@@ -126,43 +135,64 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
         discount_percent: input.discountPercent ?? null,
       })
       .eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refreshTiers();
   };
 
   const deleteTier = async (id: string) => {
     const { error, count } = await supabase.from("loyalty_tiers").delete({ count: "exact" }).eq("id", id);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     if (!count) throw new Error("No se pudo eliminar el nivel (bloqueado por permisos)");
     await refreshTiers();
   };
 
   const getCustomerByToken = async (token: string): Promise<PublicCustomer | null> => {
     const { data, error } = await supabase.rpc("get_customer_by_token", { p_token: token }).maybeSingle();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     if (!data) return null;
-    const row = data as { id: string; name: string; purchases_count: number };
-    return { id: row.id, name: row.name, purchasesCount: row.purchases_count };
+    const row = data as { id: string; name: string; purchases_count: number; available_reviews: number };
+    return {
+      id: row.id,
+      name: row.name,
+      purchasesCount: row.purchases_count,
+      availableReviews: row.available_reviews,
+    };
+  };
+
+  const submitReview = async (token: string, input: SubmitReviewInput) => {
+    const { error } = await supabase.rpc("submit_customer_review", {
+      p_token: token,
+      p_name: input.name,
+      p_rating: input.rating,
+      p_quote: input.quote,
+      p_image: input.image ?? null,
+    });
+    if (error) {
+      if (error.message.includes("SIN_RESENAS_DISPONIBLES")) {
+        throw new Error("Ya usaste todas tus reseñas disponibles. Vuelve cuando tengas una compra más.");
+      }
+      throw new Error(error.message);
+    }
   };
 
   const getOrCreateCustomerForCheckout = async (name: string, phone: string) => {
     const { data, error } = await supabase
       .rpc("get_or_create_customer_for_checkout", { p_name: name, p_phone: phone })
       .single();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     const row = data as { id: string; token: string };
     return { id: row.id, token: row.token };
   };
 
   const requestClaim = async (token: string, tierId: string) => {
     const { error } = await supabase.rpc("request_loyalty_claim", { p_token: token, p_tier_id: tierId });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refreshPendingClaims();
   };
 
   const getClaimsByToken = async (token: string): Promise<LoyaltyClaim[]> => {
     const { data, error } = await supabase.rpc("get_loyalty_claims_by_token", { p_token: token });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     return (data as ClaimRow[]).map((row) => ({
       tierId: row.tier_id,
       requestedAt: row.requested_at,
@@ -174,7 +204,7 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
 
   const getClaimsByCustomerId = async (customerId: string): Promise<LoyaltyClaimAdmin[]> => {
     const { data, error } = await supabase.from("loyalty_claims").select("*").eq("customer_id", customerId);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     return (data as AdminClaimRow[]).map((row) => ({
       id: row.id,
       customerId: row.customer_id,
@@ -188,13 +218,13 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
 
   const confirmClaim = async (claimId: string) => {
     const { error } = await supabase.rpc("confirm_loyalty_claim", { p_claim_id: claimId });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refreshPendingClaims();
   };
 
   const revertClaim = async (claimId: string) => {
     const { error } = await supabase.rpc("revert_loyalty_claim", { p_claim_id: claimId });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refreshPendingClaims();
   };
 
@@ -209,6 +239,7 @@ export function LoyaltyProvider({ children }: { children: ReactNode }) {
         deleteTier,
         getCustomerByToken,
         getOrCreateCustomerForCheckout,
+        submitReview,
         requestClaim,
         getClaimsByToken,
         getClaimsByCustomerId,

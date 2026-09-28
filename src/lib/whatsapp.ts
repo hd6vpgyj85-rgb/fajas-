@@ -12,12 +12,10 @@ interface CheckoutMessageParams {
   address: OrderAddress;
   paymentMethod: string;
   notes?: string;
-  reviewQuote?: string;
 }
 
 export function buildCheckoutMessage(params: CheckoutMessageParams): string {
-  const { businessName, items, subtotal, discount, couponCode, total, customer, address, paymentMethod, notes, reviewQuote } =
-    params;
+  const { businessName, items, subtotal, discount, couponCode, total, customer, address, paymentMethod, notes } = params;
 
   const lines: string[] = [];
   lines.push(`*Nuevo pedido — ${businessName}*`);
@@ -50,11 +48,6 @@ export function buildCheckoutMessage(params: CheckoutMessageParams): string {
     lines.push("");
     lines.push(`*Notas:* ${notes}`);
   }
-  if (reviewQuote) {
-    lines.push("");
-    lines.push(`*Reseña del cliente:* ${reviewQuote}`);
-  }
-
   return lines.join("\n");
 }
 

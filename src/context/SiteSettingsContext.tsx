@@ -109,7 +109,7 @@ export function SiteSettingsProvider({ children }: { children: ReactNode }) {
       .from("site_settings")
       .update({ ...settingsToRow(input), updated_at: new Date().toISOString() })
       .eq("id", true);
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     await refresh();
   };
 

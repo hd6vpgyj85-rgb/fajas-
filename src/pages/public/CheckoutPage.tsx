@@ -2,16 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../../context/CartContext";
 import { useOrders } from "../../context/OrdersContext";
-import { useReviews } from "../../context/ReviewsContext";
 import { useCoupons } from "../../context/CouponsContext";
 import { useLoyalty } from "../../context/LoyaltyContext";
 import { useSiteSettings } from "../../context/SiteSettingsContext";
 import { formatPrice } from "../../lib/format";
 import { buildCheckoutMessage } from "../../lib/whatsapp";
 import { getWhatsAppUrl } from "../../data/store";
-import { uploadReviewImage } from "../../lib/imageUpload";
 import { generateLoyaltyQrDataUrl, getLoyaltyCardUrl } from "../../lib/loyaltyQr";
-import StarRating from "../../components/StarRating";
 import "./CheckoutPage.css";
 
 const PAYMENT_METHODS = ["Efectivo contra entrega", "Transferencia bancaria", "Depósito en tienda"];
@@ -25,7 +22,6 @@ interface SuccessState {
 export default function CheckoutPage() {
   const { lines, subtotal, clear } = useCart();
   const { createOrder } = useOrders();
-  const { createReview } = useReviews();
   const { redeemCoupon } = useCoupons();
   const { getOrCreateCustomerForCheckout } = useLoyalty();
   const { settings } = useSiteSettings();
@@ -51,11 +47,6 @@ export default function CheckoutPage() {
   const [couponStatus, setCouponStatus] = useState<{ code: string; discount: number } | null>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
-
-  const [wantsReview, setWantsReview] = useState(false);
-  const [reviewRating, setReviewRating] = useState(5);
-  const [reviewQuote, setReviewQuote] = useState("");
-  const [reviewImageFile, setReviewImageFile] = useState<File | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -119,21 +110,6 @@ export default function CheckoutPage() {
         total,
       });
 
-      let reviewQuoteText: string | undefined;
-      if (wantsReview && reviewQuote.trim()) {
-        let imageUrl: string | null = null;
-        if (reviewImageFile) {
-          imageUrl = await uploadReviewImage(reviewImageFile);
-        }
-        await createReview({
-          name: `${form.nombre} ${form.apellido}`.trim(),
-          rating: reviewRating,
-          quote: reviewQuote.trim(),
-          image: imageUrl,
-        });
-        reviewQuoteText = reviewQuote.trim();
-      }
-
       const { token } = await getOrCreateCustomerForCheckout(`${form.nombre} ${form.apellido}`.trim(), form.telefono);
 
       const message = buildCheckoutMessage({
@@ -147,7 +123,6 @@ export default function CheckoutPage() {
         address,
         paymentMethod: form.paymentMethod,
         notes: form.notes || undefined,
-        reviewQuote: reviewQuoteText,
       });
 
       window.open(getWhatsAppUrl(settings.whatsappNumber, message), "_blank", "noopener,noreferrer");
@@ -170,7 +145,7 @@ export default function CheckoutPage() {
 
         <div className="loyalty-mini-card">
           <img src={success.qrDataUrl} alt="Código QR de tu tarjeta de fidelidad" />
-          <p>Guarda este código: acumula compras y desbloquea recompensas.</p>
+          <p>Guarda este código: acumula compras y desbloquea recompensas y reseñas.</p>
         </div>
 
         <div className="checkout-success-actions">
@@ -256,32 +231,6 @@ export default function CheckoutPage() {
         <section>
           <h2>Notas del pedido</h2>
           <textarea placeholder="Notas para tu pedido (opcional)" value={form.notes} onChange={update("notes")} />
-        </section>
-
-        <section>
-          <label className="checkout-review-toggle">
-            <input type="checkbox" checked={wantsReview} onChange={(e) => setWantsReview(e.target.checked)} />
-            Quiero dejar una reseña de mi experiencia
-          </label>
-
-          {wantsReview && (
-            <div className="checkout-review-fields">
-              <StarRating rating={reviewRating} />
-              <input
-                type="range"
-                min={1}
-                max={5}
-                value={reviewRating}
-                onChange={(e) => setReviewRating(Number(e.target.value))}
-              />
-              <textarea
-                placeholder="Cuéntanos tu experiencia"
-                value={reviewQuote}
-                onChange={(e) => setReviewQuote(e.target.value)}
-              />
-              <input type="file" accept="image/*" onChange={(e) => setReviewImageFile(e.target.files?.[0] ?? null)} />
-            </div>
-          )}
         </section>
 
         <div className="checkout-summary">

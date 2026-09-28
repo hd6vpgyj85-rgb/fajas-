@@ -6,23 +6,36 @@ import type { LoyaltyClaim } from "../../types";
 import { buildLoyaltyClaimMessage } from "../../lib/whatsapp";
 import { getWhatsAppUrl } from "../../data/store";
 import { formatDate } from "../../lib/format";
+import { uploadReviewImage } from "../../lib/imageUpload";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import StarRating from "../../components/StarRating";
 import "./FidelidadPage.css";
 
 export default function FidelidadPage() {
   const { token } = useParams<{ token: string }>();
-  const { tiers, loading: tiersLoading, getCustomerByToken, getClaimsByToken, requestClaim } = useLoyalty();
+  const { tiers, loading: tiersLoading, getCustomerByToken, getClaimsByToken, requestClaim, submitReview } = useLoyalty();
   const { settings } = useSiteSettings();
 
   const [customer, setCustomer] = useState<PublicCustomer | null | undefined>(undefined);
   const [claims, setClaims] = useState<LoyaltyClaim[]>([]);
   const [requesting, setRequesting] = useState<string | null>(null);
 
+  const [reviewName, setReviewName] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewQuote, setReviewQuote] = useState("");
+  const [reviewImageFile, setReviewImageFile] = useState<File | null>(null);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [reviewSent, setReviewSent] = useState(false);
+
   const load = async () => {
     if (!token) return;
     const c = await getCustomerByToken(token);
     setCustomer(c);
-    if (c) setClaims(await getClaimsByToken(token));
+    if (c) {
+      setClaims(await getClaimsByToken(token));
+      setReviewName((prev) => prev || c.name);
+    }
   };
 
   useEffect(() => {
@@ -66,6 +79,35 @@ export default function FidelidadPage() {
       }
     } finally {
       setRequesting(null);
+    }
+  };
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!token || !reviewQuote.trim()) return;
+    setReviewSubmitting(true);
+    setReviewError(null);
+    try {
+      let imageUrl: string | null = null;
+      if (reviewImageFile) {
+        imageUrl = await uploadReviewImage(reviewImageFile);
+      }
+      await submitReview(token, {
+        name: reviewName.trim() || customer.name,
+        rating: reviewRating,
+        quote: reviewQuote.trim(),
+        image: imageUrl,
+      });
+      setReviewQuote("");
+      setReviewImageFile(null);
+      setReviewRating(5);
+      setReviewSent(true);
+      await load();
+      setTimeout(() => setReviewSent(false), 4000);
+    } catch (err) {
+      setReviewError(err instanceof Error ? err.message : "No se pudo enviar tu reseña. Intenta de nuevo.");
+    } finally {
+      setReviewSubmitting(false);
     }
   };
 
@@ -136,6 +178,50 @@ export default function FidelidadPage() {
             </div>
           );
         })}
+      </div>
+
+      <div className="loyalty-reviews">
+        <h2>Reseñas disponibles</h2>
+        <p className="loyalty-reviews-count">
+          {customer.availableReviews > 0
+            ? `Tienes ${customer.availableReviews} reseña${customer.availableReviews > 1 ? "s" : ""} por escribir. Cada compra te da derecho a una.`
+            : "No tienes reseñas disponibles por ahora. Tu próxima compra te dará derecho a una."}
+        </p>
+
+        {customer.availableReviews > 0 && (
+          <form className="loyalty-review-form" onSubmit={handleSubmitReview}>
+            <input
+              placeholder="Tu nombre"
+              value={reviewName}
+              onChange={(e) => setReviewName(e.target.value)}
+              required
+            />
+            <div className="loyalty-review-rating">
+              <StarRating rating={reviewRating} size={22} />
+              <input
+                type="range"
+                min={1}
+                max={5}
+                value={reviewRating}
+                onChange={(e) => setReviewRating(Number(e.target.value))}
+              />
+            </div>
+            <textarea
+              placeholder="Cuéntanos tu experiencia"
+              value={reviewQuote}
+              onChange={(e) => setReviewQuote(e.target.value)}
+              required
+            />
+            <input type="file" accept="image/*" onChange={(e) => setReviewImageFile(e.target.files?.[0] ?? null)} />
+
+            {reviewError && <p className="loyalty-review-error">{reviewError}</p>}
+            {reviewSent && <p className="loyalty-review-success">¡Gracias por tu reseña! La revisaremos pronto.</p>}
+
+            <button className="btn btn-primary btn-block" type="submit" disabled={reviewSubmitting}>
+              {reviewSubmitting ? "Enviando…" : "Enviar reseña"}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
