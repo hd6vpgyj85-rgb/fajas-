@@ -18,6 +18,7 @@
   aspect-ratio: 3 / 4;
   background: var(--color-bg-soft);
   overflow: hidden;
+  touch-action: pan-y;
 }
 
 .product-card-image img {
@@ -43,6 +44,67 @@
 .product-card.has-hover-image:hover .product-card-img-hover {
   opacity: 1;
   transform: scale(1.03);
+}
+
+.product-card-img-swipe {
+  z-index: 1;
+}
+
+.product-card-img-swipe.is-next {
+  animation: product-card-swipe-next 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.product-card-img-swipe.is-prev {
+  animation: product-card-swipe-prev 0.42s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes product-card-swipe-next {
+  from {
+    opacity: 0;
+    transform: translateX(28px) scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes product-card-swipe-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-28px) scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.product-card-dots {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  pointer-events: none;
+}
+
+.product-card-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 1px 3px rgba(43, 22, 32, 0.25);
+  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), background var(--transition);
+}
+
+.product-card-dots span.is-active {
+  width: 14px;
+  border-radius: var(--radius-pill);
+  background: #fff;
 }
 
 .product-card-placeholder {

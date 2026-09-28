@@ -14,6 +14,8 @@ import "./CheckoutPage.css";
 
 const PAYMENT_METHODS = ["Efectivo contra entrega", "Transferencia bancaria", "Depósito en tienda"];
 
+const MEETUP_POINTS = ["Sendero Valle del Sol", "Sendero Las Torres", "Soriana Henequén", "Misiones", "Acordar por WhatsApp"];
+
 interface SuccessState {
   orderId: string;
   qrDataUrl: string;
@@ -267,11 +269,14 @@ export default function CheckoutPage() {
                 Cd. Juárez.
               </p>
             </div>
-            <input
-              placeholder="Zona o lugar de encuentro preferido (opcional)"
-              value={form.referencias}
-              onChange={update("referencias")}
-            />
+            <select value={form.referencias} onChange={update("referencias")}>
+              <option value="">Zona o lugar de encuentro preferido (opcional)</option>
+              {MEETUP_POINTS.map((point) => (
+                <option key={point} value={point}>
+                  {point}
+                </option>
+              ))}
+            </select>
           </section>
         )}
 
