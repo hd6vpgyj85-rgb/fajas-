@@ -68,10 +68,6 @@ export default function HomePage() {
         />
         <div className="hero-overlay" aria-hidden="true" />
         <div className="container hero-content">
-          <span className="hero-badge hero-stagger" style={{ animationDelay: "0.1s" }}>
-            <span className="hero-badge-dot" />
-            Especialistas en moda
-          </span>
           <h1 className="hero-stagger" style={{ animationDelay: "0.22s" }}>
             {settings.heroTitle}
           </h1>
@@ -96,9 +92,6 @@ export default function HomePage() {
             <span>+500 clientas satisfechas</span>
           </div>
         </div>
-        <a href="#top-productos" className="hero-scroll" aria-label="Ver productos">
-          <span />
-        </a>
       </section>
 
       <section className="home-categories container" aria-label="Categorías">
